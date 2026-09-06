@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.env
+.env.local
+.venv/
+venv/
+
+# 원자료·중간산출물은 저장소에 넣지 않는다. scripts/ 로 재생성한다.
+data/raw/
+data/interim/
+data/cache/
+data/aoi/*.geojson
+
+# 화면용 산출물은 배포에 필요하므로 넣는다.
+!web/data/

@@ -1,0 +1,25 @@
+{
+  "generated_utc": "2026-09-06T17:48:00Z",
+  "source_file": "_merged.jsonl",
+  "years": [
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "n_wetlands": 18,
+  "n_wetland_years": 74,
+  "n_wetland_years_dropped": 1,
+  "n_observations": 2044,
+  "mean_obs_per_wetland_year": 27.6,
+  "mean_revisit_days": 13.6,
+  "n_wetlands_open_water": 6,
+  "n_wetlands_no_open_water": 12,
+  "n_wetland_years_high_conf": 22,
+  "n_wetlands_with_veg_cover": 6,
+  "thr_disagree_ha_p90": 18.6
+}

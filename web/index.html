@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에코스코프 — 내륙습지 개방수면 원격판독</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    <div class="brand-text">
+      <strong>에코스코프</strong>
+      <span>내륙습지 개방수면 원격판독 · 국립생태원 생태정보 플랫폼</span>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <nav class="top-actions">
+    <button class="ghost" data-panel="method">판독 방법</button>
+    <button class="ghost" data-panel="data">자료 출처</button>
+    <button class="ghost" data-panel="limits">한계</button>
+  </nav>
+</header>
+
+<div class="claim" id="claim"></div>
+
+<main class="shell">
+
+  <aside class="rail">
+    <div class="rail-head">
+      <label class="field">
+        <span>연도</span>
+        <select id="year-select"></select>
+      </label>
+      <label class="field">
+        <span>정렬</span>
+        <select id="sort-select">
+          <option value="area">면적순</option>
+          <option value="open">개방수면적순</option>
+          <option value="obs">관측횟수순</option>
+          <option value="veg">식생피복 비중순</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="check">
+      <input type="checkbox" id="only-open" checked>
+      개방수면 판독이 성립한 습지만
+    </label>
+
+    <div class="rail-count" id="rail-count"></div>
+    <ul class="wetland-list" id="wetland-list"></ul>
+  </aside>
+
+  <section class="stage">
+
+    <section class="card hero">
+      <div class="card-head">
+        <h2>관측 달력</h2>
+        <p class="sub">행은 습지, 칸 하나는 Sentinel-1 관측 1회다. 색은 그날의 수면 상태.</p>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div class="calendar-wrap"><div id="calendar"></div></div>
+      <p class="foot" id="calendar-foot"></p>
+    </section>
+
+    <div class="row">
+      <section class="card grow">
+        <div class="card-head">
+          <h2 id="ts-title">개방수면적 시계열</h2>
+          <p class="sub" id="ts-sub">습지를 고르면 그 습지의 연중 변화를 그린다.</p>
+        </div>
+        <div id="timeseries"></div>
+        <p class="foot" id="ts-foot"></p>
+      </section>
+
+      <section class="card side">
+        <div class="card-head"><h2>습지 카드</h2></div>
+        <div id="detail"></div>
+        <div class="locator"><div id="locator"></div></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>관측 가능성</h2>
+        <p class="sub">판독보다 이게 먼저다 — 볼 수 없었던 기간의 공백을 &lsquo;변화 없음&rsquo;으로 읽지 않기 위한 것.</p>
+      </div>
+      <div id="orbits"></div>
+      <p class="foot" id="orbits-foot"></p>
+    </section>
+
+  </section>
+</main>
+
+<button class="ai-fab" id="ai-fab" title="이 화면의 자료로 답합니다">AI</button>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="drawer-head">
+    <strong id="drawer-title"></strong>
+    <button class="ghost" id="drawer-close">닫기</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<script src="app.js"></script>
+<script src="agent.js"></script>
+</body>
+</html>
