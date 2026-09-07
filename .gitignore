@@ -16,3 +16,6 @@ data/aoi/*.geojson
 
 .vercel
 .env*
+
+# 편집기·도구 설정
+.claude/
