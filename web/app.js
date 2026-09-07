@@ -410,7 +410,7 @@ function renderTimeseries() {
   for (const yr of all) for (const o of yr.observations) obs.push({ ...o, baseline: yr.open_ratio_baseline });
   obs.sort((a, b) => (a.date < b.date ? -1 : 1));
 
-  const W = Math.max(560, host.clientWidth || 620), H = 250;
+  const W = Math.max(560, host.clientWidth || 620), H = 300;
   const M = { t: 14, r: 46, b: 26, l: 46 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
 
@@ -554,7 +554,7 @@ function renderShape() {
   const spanX = Math.max((maxLon - minLon) * kx, 1e-9);
   const spanY = Math.max(maxLat - minLat, 1e-9);
 
-  const W = 260, H = 150, PAD = 16, BAR = 16;
+  const W = 190, H = 140, PAD = 12, BAR = 15;
   const scale = Math.min((W - PAD * 2) / spanX, (H - PAD - BAR) / spanY);
   const offX = (W - spanX * scale) / 2;
   const offY = (H - BAR - spanY * scale) / 2;
@@ -620,7 +620,7 @@ function renderLocator() {
   host.innerHTML = "";
   if (!S.korea) return;
 
-  const W = 260, H = 300, PAD = 10;
+  const W = 190, H = 250, PAD = 8;
   const LON = [125.5, 130.0], LAT = [33.0, 38.7];
   const X = (lon) => PAD + ((lon - LON[0]) / (LON[1] - LON[0])) * (W - PAD * 2);
   const Y = (lat) => H - PAD - ((lat - LAT[0]) / (LAT[1] - LAT[0])) * (H - PAD * 2);
