@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="style.css?v=20260907155524">
+<link rel="stylesheet" href="style.css?v=20260907160057">
 </head>
 <body>
 
@@ -103,7 +103,14 @@
       <section class="card side">
         <div class="card-head"><h2>습지 판독 요약</h2></div>
         <div id="detail"></div>
-        <div class="locator"><div id="locator"></div></div>
+        <div class="inset">
+          <span class="inset-label">판독 경계</span>
+          <div id="shape"></div>
+        </div>
+        <div class="inset">
+          <span class="inset-label">위치</span>
+          <div id="locator"></div>
+        </div>
       </section>
     </div>
 
@@ -148,7 +155,7 @@
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js?v=20260907155524"></script>
-<script src="agent.js?v=20260907155524"></script>
+<script src="app.js?v=20260907160057"></script>
+<script src="agent.js?v=20260907160057"></script>
 </body>
 </html>

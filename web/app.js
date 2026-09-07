@@ -10,6 +10,7 @@ const S = {
   points: [],
   korea: null,
   orbits: [],
+  shapes: null,
   year: null,
   sort: "quality",
   onlyOpen: true,
@@ -47,18 +48,20 @@ async function boot() {
   const get = (path, fallback) =>
     fetch(path, { cache: "no-cache" }).then((r) => r.json()).catch(() => fallback);
 
-  const [summary, years, points, korea, orbits] = await Promise.all([
+  const [summary, years, points, korea, orbits, shapes] = await Promise.all([
     get("data/summary.json", null),
     get("data/wetland_years.json", []),
     get("data/wetland_points.json", []),
     get("data/korea_adm1.geojson", null),
     get("data/orbit_history.json", []),
+    get("data/wetland_shapes.geojson", null),
   ]);
   S.summary = summary;
   S.years = years;
   S.points = points;
   S.korea = korea;
   S.orbits = orbits;
+  S.shapes = shapes;
   S.year = summary.years[summary.years.length - 1];
 
   buildYearSelect();
@@ -191,6 +194,7 @@ function select(wid) {
   renderCalendar();
   renderTimeseries();
   renderDetail();
+  renderShape();
   renderLocator();
   renderOrbits();
 }
@@ -510,6 +514,68 @@ function renderDetail() {
   host.innerHTML = html;
 }
 
+/* ---------------- 습지 형상 ---------------- */
+
+/* 위치만 점으로 찍으면 그 습지가 어떻게 생겼는지, 얼마나 큰지 알 수 없습니다.
+   판독 경계 그대로를 자기 축척으로 그리고 축척 막대를 붙입니다. */
+function renderShape() {
+  const host = $("shape");
+  host.innerHTML = "";
+  const feat = S.shapes && S.shapes.features.find((f) => f.properties.wid === S.sel);
+  if (!feat) {
+    host.innerHTML = '<p style="color:var(--muted);font-size:11.5px">판독 경계 자료가 없습니다.</p>';
+    return;
+  }
+
+  const rings = feat.geometry.type === "Polygon"
+    ? feat.geometry.coordinates
+    : feat.geometry.coordinates.flat();
+
+  let minLon = 180, maxLon = -180, minLat = 90, maxLat = -90;
+  for (const ring of rings) for (const [lon, lat] of ring) {
+    if (lon < minLon) minLon = lon;
+    if (lon > maxLon) maxLon = lon;
+    if (lat < minLat) minLat = lat;
+    if (lat > maxLat) maxLat = lat;
+  }
+
+  // 위도 보정: 경도 1도의 실제 거리는 cos(위도) 배입니다. 이걸 빼면 형상이 옆으로 늘어납니다.
+  const midLat = (minLat + maxLat) / 2;
+  const kx = Math.cos((midLat * Math.PI) / 180);
+  const spanX = Math.max((maxLon - minLon) * kx, 1e-9);
+  const spanY = Math.max(maxLat - minLat, 1e-9);
+
+  const W = 260, H = 150, PAD = 16, BAR = 16;
+  const scale = Math.min((W - PAD * 2) / spanX, (H - PAD - BAR) / spanY);
+  const offX = (W - spanX * scale) / 2;
+  const offY = (H - BAR - spanY * scale) / 2;
+  const X = (lon) => offX + (lon - minLon) * kx * scale;
+  const Y = (lat) => offY + (maxLat - lat) * scale;
+
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H });
+  for (const ring of rings) {
+    svg.appendChild(el("path", {
+      class: "shape-poly",
+      d: ring.map((c, i) => `${i ? "L" : "M"}${X(c[0]).toFixed(1)},${Y(c[1]).toFixed(1)}`).join("") + "Z",
+    }));
+  }
+
+  // 축척 막대 — 1도 = 약 111.32 km
+  const metersPerUnit = 111320 * scale;      // 화면 1px 당 미터의 역수
+  const targets = [50, 100, 200, 500, 1000, 2000, 5000];
+  const target = targets.find((m) => (m / 111320) * scale >= 40) || targets[targets.length - 1];
+  const barPx = (target / 111320) * scale;
+  const by = H - 6;
+  svg.appendChild(el("line", { class: "scale-bar", x1: PAD, y1: by, x2: PAD + barPx, y2: by }));
+  svg.appendChild(el("line", { class: "scale-bar", x1: PAD, y1: by - 3, x2: PAD, y2: by + 3 }));
+  svg.appendChild(el("line", { class: "scale-bar", x1: PAD + barPx, y1: by - 3, x2: PAD + barPx, y2: by + 3 }));
+  svg.appendChild(el("text", { class: "ax-t", x: PAD + barPx + 6, y: by + 3 },
+    [txt(target >= 1000 ? `${target / 1000} km` : `${target} m`)]));
+
+  host.appendChild(svg);
+  void metersPerUnit;
+}
+
 /* ---------------- 위치 ---------------- */
 
 function renderLocator() {
@@ -697,6 +763,7 @@ function renderAll() {
   renderCalendar();
   renderTimeseries();
   renderDetail();
+  renderShape();
   renderLocator();
   renderOrbits();
 }
