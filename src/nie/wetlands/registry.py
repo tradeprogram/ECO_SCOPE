@@ -48,7 +48,11 @@ def _finalize(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
 
 def _load_ecobank() -> gpd.GeoDataFrame | None:
-    """에코뱅크 `습지_내륙_면` 정본. 습지명·코드·유형·람사르 지정이 함께 옵니다."""
+    """에코뱅크 `습지_내륙_면` 정본.
+
+    scripts/fetch_wetlands_ecobank.py 가 속성조회(attr) 응답을 표준 이름으로 정리해
+    저장한 파일을 읽습니다. 습지명·습지코드·유형명(한글)·보호지역 지정명·주소가 함께 옵니다.
+    """
     if not ECOBANK_GEOJSON.exists():
         return None
     gdf = gpd.read_file(ECOBANK_GEOJSON)
@@ -57,26 +61,21 @@ def _load_ecobank() -> gpd.GeoDataFrame | None:
     if gdf.crs is None:
         gdf = gdf.set_crs(5186)
 
-    korea_ty = gdf.get("wtl_korea_ty_code")
     out = gpd.GeoDataFrame(
         {
-            "wid": gdf["wtl_code_id"].astype(str),
-            "name": gdf.get("wtl_nm"),
+            "wid": gdf["wtl_code"].astype(str),
+            "name": gdf.get("name"),
             "source": "ecobank",
-            "wetland_type": korea_ty,
-            "wetland_type2": gdf.get("wtl_ty_code"),
-            "ramsar": gdf.get("wtl_ramsa_ty_code"),
-            "protected": gdf.get("wtl_prtc_area_appn_code"),
-            "ctprvn_code": gdf.get("ctprvn_code"),
-            "signgu_code": gdf.get("signgu_code"),
+            "wetland_type": gdf.get("type_name"),          # 한글 유형명 (산지습지 등)
+            "korea_type_code": gdf.get("korea_type_code"),
+            "ramsar": gdf.get("ramsar_code"),
+            "protected": gdf.get("protected_name"),
+            "address": gdf.get("address"),
         },
         geometry=gdf.geometry,
         crs=gdf.crs,
     )
-    if korea_ty is None:
-        out["inland"] = True
-    else:
-        out["inland"] = ~korea_ty.fillna("").str.startswith(COASTAL_KOREA_TY_PREFIX)
+    out["inland"] = True   # 이 레이어 자체가 내륙습지 목록입니다
     return _finalize(out)
 
 
@@ -149,7 +148,7 @@ def load(source: str = "auto", inland_only: bool = True, min_area_ha: float | No
         gdf = _load_nie()
         if gdf is None and source == "nie":
             raise FileNotFoundError(f"국립생태원 정본 SHP 없음: {NIE_SHP_DIR}")
-    if gdf is None:
+    if gdf is None and source in ("auto", "nie", "osm"):
         gdf = _load_osm()
     if gdf is None:
         raise FileNotFoundError(
