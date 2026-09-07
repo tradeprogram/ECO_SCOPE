@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="style.css?v=20260907171806">
+<link rel="stylesheet" href="style.css?v=20260907185228">
 </head>
 <body>
 
 <header class="top">
   <div class="brand">
-    <img class="mark" src="assets/mark.png" alt="에코스코프 상징" width="30" height="29">
+    <img class="mark" src="assets/mark.png" alt="에코스코프 상징" width="28" height="27">
     <div class="brand-text">
       <strong>에코스코프</strong>
       <span>내륙습지 개방수면 원격판독 · 국립생태원 생태정보 플랫폼</span>
@@ -21,36 +21,39 @@
   <div class="top-stamp" id="top-stamp"></div>
 
   <nav class="top-actions">
-    <button class="ghost" data-panel="method">판독 방법</button>
-    <button class="ghost" data-panel="data">자료 출처</button>
-    <button class="ghost" data-panel="limits">판독 한계</button>
+    <button data-panel="method" type="button">판독 방법</button>
+    <button data-panel="validation" type="button">검증 결과</button>
+    <button data-panel="data" type="button">자료 출처</button>
+    <button data-panel="limits" type="button">판독 한계</button>
   </nav>
 </header>
 
-<section class="overview" id="overview">
-  <article class="panel" id="panel-obs">
+<section class="overview">
+  <article class="panel">
     <h3>관측 실적</h3>
     <div class="metrics" id="metrics-obs"></div>
-    <p class="panel-note" id="note-obs"></p>
   </article>
 
-  <article class="panel" id="panel-result">
-    <h3>판독 결과</h3>
-    <div class="metrics" id="metrics-result"></div>
-    <p class="panel-note" id="note-result"></p>
+  <article class="panel">
+    <h3>판독 대상</h3>
+    <div class="metrics" id="metrics-target"></div>
   </article>
 
-  <article class="panel accent" id="panel-ratio">
+  <article class="panel">
+    <h3>검증 결과</h3>
+    <div class="metrics" id="metrics-valid"></div>
+  </article>
+
+  <article class="panel">
     <h3>현행 조사 대비</h3>
-    <div class="ratio" id="ratio-figure"></div>
-    <p class="panel-note" id="note-ratio"></p>
+    <div class="metrics" id="metrics-ratio"></div>
   </article>
 </section>
 
 <main class="shell">
 
   <aside class="rail">
-    <div class="rail-head">
+    <div class="rail-controls">
       <label class="field">
         <span>판독 연도</span>
         <select id="year-select"></select>
@@ -59,31 +62,27 @@
         <span>정렬 기준</span>
         <select id="sort-select">
           <option value="quality">판독 신뢰도</option>
-          <option value="area">습지 면적</option>
-          <option value="open">개방수면적</option>
-          <option value="obs">관측 횟수</option>
           <option value="veg">식생피복 비중</option>
+          <option value="obs">관측 횟수</option>
+          <option value="area">습지 면적</option>
         </select>
       </label>
+      <input class="rail-search" id="rail-search" type="search" placeholder="습지명 검색" autocomplete="off">
+      <label class="check">
+        <input type="checkbox" id="only-open" checked>
+        개방수면 판독 성립 습지만
+      </label>
     </div>
-
-    <input class="rail-search" id="rail-search" type="search" placeholder="습지명으로 찾기" autocomplete="off">
-
-    <label class="check">
-      <input type="checkbox" id="only-open" checked>
-      개방수면 판독이 성립한 습지만 표시
-    </label>
-
     <div class="rail-count" id="rail-count"></div>
     <ul class="wetland-list" id="wetland-list"></ul>
   </aside>
 
   <section class="stage">
 
-    <section class="card hero">
+    <section class="card">
       <div class="card-head">
         <h2>관측 달력</h2>
-        <p class="sub">가로 한 줄은 습지 한 곳이며, 칸 하나는 Sentinel-1 관측 1회를 나타냅니다. 색은 해당 관측일의 수면 상태입니다.</p>
+        <span class="meta" id="calendar-meta"></span>
       </div>
       <div class="legend" id="legend"></div>
       <div class="calendar-wrap"><div id="calendar"></div></div>
@@ -93,20 +92,22 @@
     <div class="row">
       <section class="card grow">
         <div class="card-head">
-          <h2 id="ts-title">개방수면적 시계열</h2>
-          <p class="sub" id="ts-sub">습지를 선택하시면 해당 습지의 연중 변화를 표시합니다.</p>
+          <h2 id="ts-title">개방수면 지수</h2>
+          <span class="meta" id="ts-meta"></span>
         </div>
         <div id="timeseries"></div>
         <p class="foot" id="ts-foot"></p>
       </section>
 
-      <section class="card side">
-        <div class="card-head"><h2>습지 판독 요약</h2></div>
+      <section class="card">
+        <div class="card-head">
+          <h2>습지 판독 요약</h2>
+        </div>
         <div id="detail"></div>
         <div class="layer-pick" id="layer-pick">
-          <button class="layer-btn on" data-layer="">경계만</button>
-          <button class="layer-btn" data-layer="자연환경조사_식생_면">자연환경조사 식생도</button>
-          <button class="layer-btn" data-layer="생태계정밀조사_식생_면">정밀조사 식생도</button>
+          <button class="layer-btn on" data-layer="" type="button">경계만</button>
+          <button class="layer-btn" data-layer="자연환경조사_식생_면" type="button">자연환경조사 식생도</button>
+          <button class="layer-btn" data-layer="생태계정밀조사_식생_면" type="button">정밀조사 식생도</button>
         </div>
         <div class="insets">
           <div class="inset">
@@ -118,14 +119,13 @@
             <div id="locator"></div>
           </div>
         </div>
-        <p class="inset-note" id="shape-note"></p>
       </section>
     </div>
 
     <section class="card">
       <div class="card-head">
         <h2>관측 가능성</h2>
-        <p class="sub">판독에 앞서 확인하는 항목입니다. 관측이 이루어지지 않은 기간을 &lsquo;변화 없음&rsquo;으로 해석하는 오류를 막기 위한 것입니다.</p>
+        <span class="meta" id="orbits-meta"></span>
       </div>
       <div id="orbits"></div>
       <p class="foot" id="orbits-foot"></p>
@@ -134,22 +134,22 @@
   </section>
 </main>
 
-<button class="agent-launcher" id="agent-launcher" type="button" title="에코스코프.agent">AGENT</button>
+<button class="agent-launcher" id="agent-launcher" type="button">AGENT</button>
 
-<aside class="agent-panel" id="agent-panel" aria-label="에코스코프.agent">
+<aside class="agent-panel" id="agent-panel" aria-label="에코스코프 에이전트">
   <div class="agent-head">
     <div>
       <strong>에코스코프.agent</strong>
-      <span class="agent-sub">화면에 실린 판독 결과를 읽고 근거와 함께 답변합니다</span>
+      <span class="agent-sub">화면의 판독 결과를 근거로 답변합니다</span>
     </div>
     <button class="agent-close" id="agent-close" type="button" title="닫기">&times;</button>
   </div>
   <div class="agent-body" id="agent-body"></div>
   <form class="agent-form" id="agent-form">
     <textarea class="agent-input" id="agent-input" rows="2"
-      placeholder="예: 우포늪의 여름철 개방수면 감소 원인을 설명해 주십시오"></textarea>
+      placeholder="예: 우포늪의 여름철 개방수면 감소 원인은 무엇입니까"></textarea>
     <div class="agent-form-row">
-      <span class="agent-status" id="agent-status">Gemini 연결 시 에이전트 답변, 미연결 시 화면 자료 요약</span>
+      <span class="agent-status" id="agent-status">질의응답 준비됨</span>
       <button class="agent-send" id="agent-send" type="submit">질의</button>
     </div>
   </form>
@@ -158,12 +158,12 @@
 <div class="drawer" id="drawer" hidden>
   <div class="drawer-head">
     <strong id="drawer-title"></strong>
-    <button class="ghost" id="drawer-close">닫기</button>
+    <button class="drawer-close" id="drawer-close" type="button">닫기</button>
   </div>
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js?v=20260907171806"></script>
-<script src="agent.js?v=20260907171806"></script>
+<script src="app.js?v=20260907185228"></script>
+<script src="agent.js?v=20260907185228"></script>
 </body>
 </html>

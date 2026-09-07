@@ -107,13 +107,27 @@ def build(sources: list[str]) -> None:
           f"식생피복 관측된 습지 {head['n_wetlands_with_veg_cover']}개소")
     # 3.5) 관측 가능성 이력 — 궤도별 연 관측수.
     #      판독보다 이게 먼저다. 관측이 없어서 생긴 공백을 '변화 없음'으로 읽지 않기 위한 것.
-    orbits: list[dict] = []
+    #    한 습지가 여러 배치에 걸쳐 있으면 연도 범위가 서로 다릅니다.
+    #    먼저 온 것을 채택하면 1개년만 돌린 배치가 다년 배치를 덮어 이력이 잘립니다.
+    #    같은 위성 카탈로그에서 나온 수치이므로 연도별로 합집합을 취합니다.
+    merged_orbits: dict[str, dict] = {}
     for name in sources:
         hp = INTERIM / (Path(name).stem + "_orbits.json")
-        if hp.exists():
-            for rec in json.loads(hp.read_text(encoding="utf-8")):
-                if rec["wid"] not in {o["wid"] for o in orbits}:
-                    orbits.append(rec)
+        if not hp.exists():
+            continue
+        for rec in json.loads(hp.read_text(encoding="utf-8")):
+            cur = merged_orbits.get(rec["wid"])
+            if cur is None:
+                merged_orbits[rec["wid"]] = json.loads(json.dumps(rec))
+                continue
+            for orb, by_year in rec["by_orbit_year"].items():
+                cur["by_orbit_year"].setdefault(orb, {}).update(by_year)
+            # 궤도 선택은 관측 범위가 넓은 쪽 판단을 따릅니다.
+            span = lambda r: sum(len(v) for v in r["by_orbit_year"].values())
+            if span(rec) > span(cur):
+                cur["chosen_orbit"] = rec["chosen_orbit"]
+                cur["chosen_pass"] = rec.get("chosen_pass", cur.get("chosen_pass"))
+    orbits = list(merged_orbits.values())
     if orbits:
         (WEB_DATA / "orbit_history.json").write_text(
             json.dumps(orbits, ensure_ascii=False), encoding="utf-8"
