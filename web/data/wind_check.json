@@ -1,0 +1,209 @@
+{
+ "by_wetland": {
+  "osm-relation-20722977": {
+   "name": null,
+   "area_ha": 438.35,
+   "open": {
+    "n": 17,
+    "wind_mean_ms": 4.41,
+    "wind_max_ms": 8.1,
+    "pearson_r_wind_vs_openratio": -0.445,
+    "open_ratio_low_wind": 0.1423,
+    "n_low_wind": 5,
+    "open_ratio_high_wind": 0.0458,
+    "n_high_wind": 5
+   },
+   "winter_open": {
+    "n": 10,
+    "wind_mean_ms": 4.71,
+    "wind_max_ms": 8.1,
+    "pearson_r_wind_vs_openratio": 0.13,
+    "open_ratio_low_wind": 0.0364,
+    "n_low_wind": 3,
+    "open_ratio_high_wind": 0.043,
+    "n_high_wind": 3
+   },
+   "backscatter_dominance": {
+    "n": 17,
+    "vv_min_db": -14.2,
+    "vv_max_db": -9.3,
+    "n_scenes_mean_below_threshold": 0,
+    "n_scenes_mean_above_threshold": 17,
+    "pearson_r_vv_vs_openratio": -0.643,
+    "r2_explained_by_mean_vv": 0.413
+   },
+   "partial_r_wind_controlling_vv": -0.474
+  },
+  "osm-way-1052409954": {
+   "name": null,
+   "area_ha": 1252.53,
+   "open": {
+    "n": 4
+   },
+   "winter_open": {
+    "n": 4
+   },
+   "backscatter_dominance": {
+    "n": 4
+   },
+   "partial_r_wind_controlling_vv": null
+  },
+  "osm-way-37220944": {
+   "name": "우포늪",
+   "area_ha": 196.18,
+   "open": {
+    "n": 194,
+    "wind_mean_ms": 1.94,
+    "wind_max_ms": 4.69,
+    "pearson_r_wind_vs_openratio": -0.058,
+    "open_ratio_low_wind": 0.2226,
+    "n_low_wind": 169,
+    "open_ratio_high_wind": null,
+    "n_high_wind": 0
+   },
+   "winter_open": {
+    "n": 75,
+    "wind_mean_ms": 2.1,
+    "wind_max_ms": 4.69,
+    "pearson_r_wind_vs_openratio": -0.278,
+    "open_ratio_low_wind": 0.2289,
+    "n_low_wind": 63,
+    "open_ratio_high_wind": null,
+    "n_high_wind": 0
+   },
+   "backscatter_dominance": {
+    "n": 194,
+    "vv_min_db": -22.3,
+    "vv_max_db": -12.2,
+    "n_scenes_mean_below_threshold": 137,
+    "n_scenes_mean_above_threshold": 57,
+    "pearson_r_vv_vs_openratio": -0.801,
+    "r2_explained_by_mean_vv": 0.641
+   },
+   "partial_r_wind_controlling_vv": -0.143
+  },
+  "osm-way-472248929": {
+   "name": null,
+   "area_ha": 276.83,
+   "open": {
+    "n": 7,
+    "wind_mean_ms": 4.43,
+    "wind_max_ms": 8.01,
+    "pearson_r_wind_vs_openratio": 0.316,
+    "open_ratio_low_wind": 0.0438,
+    "n_low_wind": 2,
+    "open_ratio_high_wind": 0.1654,
+    "n_high_wind": 2
+   },
+   "winter_open": {
+    "n": 6,
+    "wind_mean_ms": 4.91,
+    "wind_max_ms": 8.01,
+    "pearson_r_wind_vs_openratio": 0.116,
+    "open_ratio_low_wind": 0.0601,
+    "n_low_wind": 1,
+    "open_ratio_high_wind": 0.1654,
+    "n_high_wind": 2
+   },
+   "backscatter_dominance": {
+    "n": 7,
+    "vv_min_db": -15.3,
+    "vv_max_db": -13.3,
+    "n_scenes_mean_below_threshold": 0,
+    "n_scenes_mean_above_threshold": 7,
+    "pearson_r_vv_vs_openratio": -0.921,
+    "r2_explained_by_mean_vv": 0.847
+   },
+   "partial_r_wind_controlling_vv": null
+  },
+  "osm-way-472248930": {
+   "name": null,
+   "area_ha": 429.44,
+   "open": {
+    "n": 7,
+    "wind_mean_ms": 4.2,
+    "wind_max_ms": 7.57,
+    "pearson_r_wind_vs_openratio": 0.445,
+    "open_ratio_low_wind": 0.0865,
+    "n_low_wind": 2,
+    "open_ratio_high_wind": 0.2471,
+    "n_high_wind": 2
+   },
+   "winter_open": {
+    "n": 6,
+    "wind_mean_ms": 4.66,
+    "wind_max_ms": 7.57,
+    "pearson_r_wind_vs_openratio": 0.287,
+    "open_ratio_low_wind": 0.1256,
+    "n_low_wind": 1,
+    "open_ratio_high_wind": 0.2471,
+    "n_high_wind": 2
+   },
+   "backscatter_dominance": {
+    "n": 7,
+    "vv_min_db": -15.7,
+    "vv_max_db": -13.7,
+    "n_scenes_mean_below_threshold": 0,
+    "n_scenes_mean_above_threshold": 7,
+    "pearson_r_vv_vs_openratio": -0.932,
+    "r2_explained_by_mean_vv": 0.868
+   },
+   "partial_r_wind_controlling_vv": null
+  },
+  "osm-way-867010167": {
+   "name": null,
+   "area_ha": 1683.97,
+   "open": {
+    "n": 39,
+    "wind_mean_ms": 3.7,
+    "wind_max_ms": 7.69,
+    "pearson_r_wind_vs_openratio": -0.027,
+    "open_ratio_low_wind": 0.082,
+    "n_low_wind": 21,
+    "open_ratio_high_wind": 0.0841,
+    "n_high_wind": 7
+   },
+   "winter_open": {
+    "n": 17,
+    "wind_mean_ms": 4.07,
+    "wind_max_ms": 7.49,
+    "pearson_r_wind_vs_openratio": -0.039,
+    "open_ratio_low_wind": 0.105,
+    "n_low_wind": 7,
+    "open_ratio_high_wind": 0.0996,
+    "n_high_wind": 4
+   },
+   "backscatter_dominance": {
+    "n": 39,
+    "vv_min_db": -15.4,
+    "vv_max_db": -11.1,
+    "n_scenes_mean_below_threshold": 0,
+    "n_scenes_mean_above_threshold": 39,
+    "pearson_r_vv_vs_openratio": -0.763,
+    "r2_explained_by_mean_vv": 0.582
+   },
+   "partial_r_wind_controlling_vv": -0.075
+  }
+ },
+ "winter_only": {
+  "n": 118,
+  "wind_mean_ms": 2.96,
+  "wind_max_ms": 8.1,
+  "pearson_r_wind_vs_openratio": -0.426,
+  "open_ratio_low_wind": 0.2042,
+  "n_low_wind": 76,
+  "open_ratio_high_wind": 0.1257,
+  "n_high_wind": 13
+ },
+ "all_open": {
+  "n": 268,
+  "wind_mean_ms": 2.51,
+  "wind_max_ms": 8.1,
+  "pearson_r_wind_vs_openratio": -0.366,
+  "open_ratio_low_wind": 0.2019,
+  "n_low_wind": 200,
+  "open_ratio_high_wind": 0.1069,
+  "n_high_wind": 18
+ },
+ "note": "ERA5_LAND 11 km 격자의 지역 풍속입니다. 국지 돌풍은 잡지 못합니다. 음의 상관은 바람이 셀수록 개방수면이 좁게 판독됨을 뜻합니다. 여러 습지를 한데 묶은 상관은 습지 간 차이가 만든 허상일 수 있으므로 습지별 값(by_wetland)을 먼저 보십시오."
+}

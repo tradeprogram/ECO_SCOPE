@@ -193,3 +193,43 @@ def report(pairs: list[dict]) -> dict:
             "판정이 실제로 시험되는 곳은 개방수면 구간(by_state.open)입니다."
         ),
     }
+
+
+# --- 판독이 독립된 정보를 담고 있는가 -------------------------------------
+
+def backscatter_dominance(observations: list[dict]) -> dict:
+    """개방수면'적'이 폴리곤 평균 후방산란의 재진술에 불과한지 봅니다.
+
+    고정임계로 면적을 내면, 폴리곤 전체의 밝기 분포가 통째로 이동할 때
+    임계 아래 화소 비율도 따라 움직입니다. 이 경우 산출된 '면적'은 수면의
+    공간적 범위를 짚은 것이 아니라 **평균 밝기를 다시 말한 것**에 가깝습니다.
+
+    평균 VV 와 개방수면율의 상관이 강할수록(r^2 가 클수록) 면적 산출이
+    독립적으로 담고 있는 정보가 적습니다. 아울러 임계값이 관측 분포의 한가운데에
+    놓여 있으면 작은 복사량 변동에도 면적이 크게 흔들립니다.
+    """
+    use = [o for o in observations if o.get("vv_db") is not None and o.get("open_ratio") is not None]
+    if len(use) < 5:
+        return {"n": len(use)}
+    vv = [o["vv_db"] for o in use]
+    ratio = [o["open_ratio"] for o in use]
+    r = _pearson(vv, ratio)
+    below = sum(1 for v in vv if v < -16.0)
+    return {
+        "n": len(use),
+        "vv_min_db": round(min(vv), 1),
+        "vv_max_db": round(max(vv), 1),
+        "n_scenes_mean_below_threshold": below,
+        "n_scenes_mean_above_threshold": len(vv) - below,
+        "pearson_r_vv_vs_openratio": round(r, 3) if r is not None else None,
+        "r2_explained_by_mean_vv": round(r * r, 3) if r is not None else None,
+    }
+
+
+def partial_correlation(xs: list[float], ys: list[float], zs: list[float]) -> float | None:
+    """z 를 통제한 x·y 의 편상관. 교란변수를 뺀 순수 기여를 볼 때 씁니다."""
+    rxy, rxz, ryz = _pearson(xs, ys), _pearson(xs, zs), _pearson(ys, zs)
+    if None in (rxy, rxz, ryz):
+        return None
+    den = math.sqrt(max(1e-12, (1 - rxz ** 2) * (1 - ryz ** 2)))
+    return (rxy - rxz * ryz) / den
