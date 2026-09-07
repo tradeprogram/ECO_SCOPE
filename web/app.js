@@ -11,6 +11,7 @@ const S = {
   korea: null,
   orbits: [],
   shapes: null,
+  layer: "",
   year: null,
   sort: "quality",
   onlyOpen: true,
@@ -553,6 +554,27 @@ function renderShape() {
   const Y = (lat) => offY + (maxLat - lat) * scale;
 
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H });
+
+  // 에코뱅크 식생도를 판독 경계 아래에 깝니다. 식생피복 판정의 지상 대조 자료입니다.
+  // 인증키는 서버에만 두므로 /map/wms 프록시를 거칩니다.
+  if (S.layer && feat.properties.bbox5186) {
+    const src = `/map/wms?layer=${encodeURIComponent(S.layer)}` +
+                `&bbox=${feat.properties.bbox5186}` +
+                `&width=${Math.max(Math.round(spanX * scale), 64)}` +
+                `&height=${Math.max(Math.round(spanY * scale), 64)}`;
+    const img = el("image", {
+      x: offX, y: offY, width: spanX * scale, height: spanY * scale,
+      href: src, preserveAspectRatio: "none", opacity: 0.85,
+    });
+    // 프록시가 없거나 키가 없으면 조용히 감추고 사유만 적습니다.
+    img.addEventListener("error", () => {
+      img.remove();
+      $("shape-note").textContent =
+        "식생도를 불러오지 못했습니다. 에코뱅크 인증키가 설정된 배포 환경에서 표시됩니다.";
+    });
+    svg.appendChild(img);
+  }
+
   for (const ring of rings) {
     svg.appendChild(el("path", {
       class: "shape-poly",
@@ -574,6 +596,13 @@ function renderShape() {
 
   host.appendChild(svg);
   void metersPerUnit;
+
+  $("shape-note").textContent = S.layer
+    ? `${S.layer.replace(/_/g, " ")}를 판독 경계 아래에 겹쳐 표시합니다.`
+    : "판독에 사용한 경계입니다. 축척 막대는 실제 거리를 나타냅니다.";
+  for (const b of document.querySelectorAll(".layer-btn")) {
+    b.classList.toggle("on", (b.dataset.layer || "") === S.layer);
+  }
 }
 
 /* ---------------- 위치 ---------------- */
@@ -736,6 +765,10 @@ function wireControls() {
   $("sort-select").onchange = (e) => { S.sort = e.target.value; renderAll(); };
   $("only-open").onchange = (e) => { S.onlyOpen = e.target.checked; renderAll(); };
   $("rail-search").oninput = debounce((e) => { S.search = e.target.value.trim(); renderAll(); }, 160);
+
+  for (const b of document.querySelectorAll(".layer-btn")) {
+    b.onclick = () => { S.layer = b.dataset.layer || ""; renderShape(); };
+  }
 
   for (const btn of document.querySelectorAll("[data-panel]")) {
     btn.onclick = () => openPanel(PANELS[btn.dataset.panel]);

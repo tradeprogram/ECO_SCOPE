@@ -89,9 +89,17 @@ def build(sources: list[str]) -> None:
         ),
         encoding="utf-8",
     )
-    gdf[["wid", "name", "area_ha", "geometry"]].to_file(
-        WEB_DATA / "wetland_shapes.geojson", driver="GeoJSON"
-    )
+    # 화면이 에코뱅크 WMS 를 겹쳐 부르려면 EPSG:5186 bbox 가 필요합니다.
+    # 브라우저에 투영 라이브러리를 싣지 않으려고 여기서 미리 계산해 실어 보냅니다.
+    b5186 = gdf.to_crs(5186).bounds.round(1)
+    shapes = gdf[["wid", "name", "area_ha", "geometry"]].copy()
+    shapes["bbox5186"] = [
+        f"{r.minx},{r.miny},{r.maxx},{r.maxy}" for r in b5186.itertuples()
+    ]
+    out_shapes = WEB_DATA / "wetland_shapes.geojson"
+    if out_shapes.exists():
+        out_shapes.unlink()
+    shapes.to_file(out_shapes, driver="GeoJSON")
 
     print(f"습지 {head['n_wetlands']}개소 / 습지-연도 {head['n_wetland_years']}건 "
           f"/ 관측 {head['n_observations']:,}회")

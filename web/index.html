@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="style.css?v=20260907160057">
+<link rel="stylesheet" href="style.css?v=20260907160411">
 </head>
 <body>
 
@@ -105,7 +105,13 @@
         <div id="detail"></div>
         <div class="inset">
           <span class="inset-label">판독 경계</span>
+          <div class="layer-pick" id="layer-pick">
+            <button class="layer-btn on" data-layer="">경계만</button>
+            <button class="layer-btn" data-layer="자연환경조사_식생_면">자연환경조사 식생도</button>
+            <button class="layer-btn" data-layer="생태계정밀조사_식생_면">정밀조사 식생도</button>
+          </div>
           <div id="shape"></div>
+          <p class="inset-note" id="shape-note"></p>
         </div>
         <div class="inset">
           <span class="inset-label">위치</span>
@@ -155,7 +161,7 @@
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js?v=20260907160057"></script>
-<script src="agent.js?v=20260907160057"></script>
+<script src="app.js?v=20260907160411"></script>
+<script src="agent.js?v=20260907160411"></script>
 </body>
 </html>

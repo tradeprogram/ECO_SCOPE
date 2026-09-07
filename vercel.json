@@ -5,10 +5,12 @@
   "installCommand": null,
   "outputDirectory": "web",
   "rewrites": [
-    { "source": "/ai/chat", "destination": "/api/chat" }
+    { "source": "/ai/chat", "destination": "/api/chat" },
+    { "source": "/map/wms", "destination": "/api/ecomap" }
   ],
   "functions": {
-    "api/chat.py": { "maxDuration": 30 }
+    "api/chat.py": { "maxDuration": 30 },
+    "api/ecomap.py": { "maxDuration": 30 }
   },
   "headers": [
     {

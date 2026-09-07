@@ -171,14 +171,20 @@ def wms_image(layer: str, bbox: tuple[float, float, float, float],
     )
 
 
-def attr_page(layer: str, page: int, rows: int = 200) -> dict:
-    """속성 조회 1페이지. `geom` 에 WKT 도형이 함께 들어 있습니다."""
+def attr_page(layer: str, page: int, rows: int = 200, retries: int = 1) -> dict:
+    """속성 조회 1페이지. `geom` 에 WKT 도형이 함께 들어 있습니다.
+
+    기본 재시도가 1회인 이유: 이 엔드포인트의 실패는 처리 시간 상한(약 10초)에서 오며
+    곧바로 다시 걸어도 대개 또 실패합니다. 여기서 3회씩 재시도하면 한 페이지 실패에
+    36초가 들어 전체 수집이 멈춥니다. 재시도는 바깥 다회 루프가 시간 간격을 두고 합니다.
+    """
     spec = LAYERS.get(layer)
     if spec is None or "attr" not in spec:
         raise KeyError(f"속성 조회 URL 을 모르는 레이어입니다: {layer}")
     raw = _get(
         spec["attr"],
         {"type": "json", "numOfRows": min(rows, MAX_ROWS), "pageNo": page},
+        retries=retries,
     )
     payload = json.loads(raw.decode("utf-8", "replace"))
     header = payload.get("header", {})
@@ -191,8 +197,8 @@ def fetch_layer_attrs(
     layer: str,
     rows: int = 10,
     checkpoint: "Path | None" = None,
-    passes: int = 4,
-    pause_s: float = 0.8,
+    passes: int = 8,
+    pause_s: float = 0.4,
     progress: bool = True,
 ) -> tuple[list[dict], list[int]]:
     """레이어 전량을 속성 조회로 받습니다. 중간에 끊겨도 이어서 받습니다.
@@ -205,7 +211,7 @@ def fetch_layer_attrs(
 
     반환: (수신 항목, 끝내 받지 못한 페이지 번호)
     """
-    total = int(attr_page(layer, 1, 1).get("totalCount", 0))
+    total = int(attr_page(layer, 1, 1, retries=3).get("totalCount", 0))
     pages = (total + rows - 1) // rows
 
     done: dict[int, list[dict]] = {}
