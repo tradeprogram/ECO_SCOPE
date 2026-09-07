@@ -20,24 +20,39 @@ from nie.wetlands import aggregate, registry  # noqa: E402
 
 def build(sources: list[str]) -> None:
     merged = INTERIM / "_merged.jsonl"
-    seen: set[tuple[str, int]] = set()
-    lines: list[str] = []
+
+    def richness(rec: dict) -> tuple:
+        """같은 (습지, 연도)가 여러 파일에 있을 때 어느 것을 쓸지 정하는 기준.
+
+        광학 교차검증까지 수집된 기록을 우선합니다. 인자 순서에 의존하면
+        --optical 없이 돌린 배치가 있는 배치를 덮어 NDVI 근거가 사라집니다.
+        """
+        return (
+            rec.get("status") == "ok",
+            bool(rec.get("optical")),
+            len(rec.get("scenes", [])),
+        )
+
+    best: dict[tuple[str, int], dict] = {}
+    n_files = 0
     for name in sources:
         path = INTERIM / name
         if not path.exists():
             print(f"  건너뜀 (없음): {path.name}")
             continue
+        n_files += 1
         for line in path.read_text(encoding="utf-8").splitlines():
             if not line.strip():
                 continue
             rec = json.loads(line)
             key = (rec["wid"], rec["year"])
-            if key in seen:      # 뒤에 온 파일이 이기지 않는다. 먼저 온 것이 정본.
-                continue
-            seen.add(key)
-            lines.append(line)
+            if key not in best or richness(rec) > richness(best[key]):
+                best[key] = rec
+
+    lines = [json.dumps(r, ensure_ascii=False) for _, r in sorted(best.items())]
     merged.write_text(chr(10).join(lines) + chr(10), encoding="utf-8")
-    print(f"원자료 {len(sources)}개 파일 -> 습지-연도 {len(lines)}건")
+    n_optical = sum(1 for r in best.values() if r.get("optical"))
+    print(f"원자료 {n_files}개 파일 -> 습지-연도 {len(lines)}건 (광학 교차검증 {n_optical}건)")
 
     summary = aggregate.summarize(merged)
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20260907125724">
 </head>
 <body>
 
@@ -22,7 +22,7 @@
   <nav class="top-actions">
     <button class="ghost" data-panel="method">판독 방법</button>
     <button class="ghost" data-panel="data">자료 출처</button>
-    <button class="ghost" data-panel="limits">한계</button>
+    <button class="ghost" data-panel="limits">판독 한계</button>
   </nav>
 </header>
 
@@ -33,23 +33,26 @@
   <aside class="rail">
     <div class="rail-head">
       <label class="field">
-        <span>연도</span>
+        <span>판독 연도</span>
         <select id="year-select"></select>
       </label>
       <label class="field">
-        <span>정렬</span>
+        <span>정렬 기준</span>
         <select id="sort-select">
-          <option value="area">면적순</option>
-          <option value="open">개방수면적순</option>
-          <option value="obs">관측횟수순</option>
-          <option value="veg">식생피복 비중순</option>
+          <option value="quality">판독 신뢰도</option>
+          <option value="area">습지 면적</option>
+          <option value="open">개방수면적</option>
+          <option value="obs">관측 횟수</option>
+          <option value="veg">식생피복 비중</option>
         </select>
       </label>
     </div>
 
+    <input class="rail-search" id="rail-search" type="search" placeholder="습지명으로 찾기" autocomplete="off">
+
     <label class="check">
       <input type="checkbox" id="only-open" checked>
-      개방수면 판독이 성립한 습지만
+      개방수면 판독이 성립한 습지만 표시
     </label>
 
     <div class="rail-count" id="rail-count"></div>
@@ -61,7 +64,7 @@
     <section class="card hero">
       <div class="card-head">
         <h2>관측 달력</h2>
-        <p class="sub">행은 습지, 칸 하나는 Sentinel-1 관측 1회다. 색은 그날의 수면 상태.</p>
+        <p class="sub">가로 한 줄은 습지 한 곳이며, 칸 하나는 Sentinel-1 관측 1회를 나타냅니다. 색은 해당 관측일의 수면 상태입니다.</p>
       </div>
       <div class="legend" id="legend"></div>
       <div class="calendar-wrap"><div id="calendar"></div></div>
@@ -72,14 +75,14 @@
       <section class="card grow">
         <div class="card-head">
           <h2 id="ts-title">개방수면적 시계열</h2>
-          <p class="sub" id="ts-sub">습지를 고르면 그 습지의 연중 변화를 그린다.</p>
+          <p class="sub" id="ts-sub">습지를 선택하시면 해당 습지의 연중 변화를 표시합니다.</p>
         </div>
         <div id="timeseries"></div>
         <p class="foot" id="ts-foot"></p>
       </section>
 
       <section class="card side">
-        <div class="card-head"><h2>습지 카드</h2></div>
+        <div class="card-head"><h2>습지 판독 요약</h2></div>
         <div id="detail"></div>
         <div class="locator"><div id="locator"></div></div>
       </section>
@@ -88,7 +91,7 @@
     <section class="card">
       <div class="card-head">
         <h2>관측 가능성</h2>
-        <p class="sub">판독보다 이게 먼저다 — 볼 수 없었던 기간의 공백을 &lsquo;변화 없음&rsquo;으로 읽지 않기 위한 것.</p>
+        <p class="sub">판독에 앞서 확인하는 항목입니다. 관측이 이루어지지 않은 기간을 &lsquo;변화 없음&rsquo;으로 해석하는 오류를 막기 위한 것입니다.</p>
       </div>
       <div id="orbits"></div>
       <p class="foot" id="orbits-foot"></p>
@@ -97,7 +100,26 @@
   </section>
 </main>
 
-<button class="ai-fab" id="ai-fab" title="이 화면의 자료로 답합니다">AI</button>
+<button class="agent-launcher" id="agent-launcher" type="button" title="에코스코프.agent">AGENT</button>
+
+<aside class="agent-panel" id="agent-panel" aria-label="에코스코프.agent">
+  <div class="agent-head">
+    <div>
+      <strong>에코스코프.agent</strong>
+      <span class="agent-sub">화면에 실린 판독 결과를 읽고 근거와 함께 답변합니다</span>
+    </div>
+    <button class="agent-close" id="agent-close" type="button" title="닫기">&times;</button>
+  </div>
+  <div class="agent-body" id="agent-body"></div>
+  <form class="agent-form" id="agent-form">
+    <textarea class="agent-input" id="agent-input" rows="2"
+      placeholder="예: 우포늪의 여름철 개방수면 감소 원인을 설명해 주십시오"></textarea>
+    <div class="agent-form-row">
+      <span class="agent-status" id="agent-status">Gemini 연결 시 에이전트 답변, 미연결 시 화면 자료 요약</span>
+      <button class="agent-send" id="agent-send" type="submit">질의</button>
+    </div>
+  </form>
+</aside>
 
 <div class="drawer" id="drawer" hidden>
   <div class="drawer-head">
@@ -107,7 +129,7 @@
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js"></script>
-<script src="agent.js"></script>
+<script src="app.js?v=20260907125724"></script>
+<script src="agent.js?v=20260907125724"></script>
 </body>
 </html>
