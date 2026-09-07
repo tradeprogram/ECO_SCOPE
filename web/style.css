@@ -83,13 +83,8 @@ h2{margin:0;font-size:15px;font-weight:650;letter-spacing:-.01em}
   -webkit-backdrop-filter:var(--blur);
 }
 .brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.mark{
-  width:28px;height:28px;border-radius:9px;flex-shrink:0;
-  background:
-    radial-gradient(circle at 50% 62%, var(--water) 0 26%, transparent 27%),
-    linear-gradient(160deg,var(--green),#4aa878);
-  box-shadow:0 4px 12px rgba(31,122,77,.28), inset 0 1px 0 rgba(255,255,255,.5);
-}
+/* 상징은 갈대와 수면을 원형에 담은 형태입니다. 딥 틸 #004954 · 세이지 #728869 */
+.mark{width:30px;height:auto;flex-shrink:0;display:block}
 .brand-text{display:flex;flex-direction:column;line-height:1.25}
 .brand-text strong{font-size:15px;letter-spacing:-.02em}
 .brand-text span{font-size:11.5px;color:var(--muted)}
