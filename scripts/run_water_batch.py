@@ -34,6 +34,8 @@ def main() -> None:
     ap.add_argument("--out", default="water_timeseries.jsonl")
     ap.add_argument("--optical", action="store_true", help="Sentinel-2 교차검증 동시 수집")
     ap.add_argument("--wids", default=None, help="쉼표구분 wid 목록. 주면 --top/--min-area 를 무시한다")
+    ap.add_argument("--types", default=None,
+                    help="쉼표구분 습지유형(예: 호수습지,하천습지). 경계가 뚜렷한 유형만 고를 때 쓴다")
     args = ap.parse_args()
 
     if args.wids:
@@ -44,7 +46,11 @@ def main() -> None:
         if missing:
             print("레지스트리에 없는 wid:", ", ".join(sorted(missing)))
     else:
-        wetlands = registry.load(min_area_ha=args.min_area).head(args.top)
+        wetlands = registry.load(min_area_ha=args.min_area)
+        if args.types:
+            want = {t.strip() for t in args.types.split(",") if t.strip()}
+            wetlands = wetlands[wetlands.wetland_type.isin(want)].copy()
+        wetlands = wetlands.head(args.top)
     years = parse_years(args.years)
     out = INTERIM / args.out
 

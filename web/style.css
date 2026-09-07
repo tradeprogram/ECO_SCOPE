@@ -135,7 +135,9 @@ table{border-collapse:collapse}
   padding:9px var(--pad);border-bottom:1px solid var(--line-2);cursor:pointer;
 }
 .wetland-list li:hover{background:#fafbfa}
-.wetland-list li.on{background:var(--green-bg);box-shadow:inset 3px 0 0 var(--green)}
+/* 선택 표시는 연두색 바탕으로만 합니다. 왼쪽 색 막대는 두지 않습니다. */
+.wetland-list li.on{background:var(--green-bg)}
+.wetland-list li.on .wl-name{font-weight:600}
 .wl-name{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wl-num{font-size:12px;font-variant-numeric:tabular-nums;color:var(--water);font-weight:600}
 .wl-meta{grid-column:1/-1;font-size:10.5px;color:var(--muted);display:flex;gap:6px;align-items:center;margin-top:2px}
