@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler
@@ -22,7 +23,9 @@ API_KEY = os.environ.get("GEMINI_API_KEY")
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 MAX_QUESTION = 500
-TIMEOUT_S = 45
+TIMEOUT_S = 20          # 한 번의 호출에 허용하는 시간
+RETRY_STATUS = {429, 500, 502, 503, 504}   # 모델 쪽 일시 오류
+MAX_ATTEMPTS = 3
 
 SYSTEM = """당신은 국립생태원 생태정보 플랫폼 '에코스코프'의 판독 결과 해설 담당자입니다.
 내륙습지의 Sentinel-1 SAR 개방수면 판독 결과를 읽고 담당자에게 설명합니다.
@@ -69,8 +72,28 @@ def _answer(question: str, evidence: dict) -> str:
         data=body,
         headers={"Content-Type": "application/json", "x-goog-api-key": API_KEY},
     )
-    with urllib.request.urlopen(req, timeout=TIMEOUT_S) as resp:
-        payload = json.loads(resp.read().decode("utf-8"))
+
+    # 모델 쪽 일시 오류(과부하 503 등)는 곧바로 실패로 처리하지 않고 짧게 물러났다
+    # 다시 겁니다. 함수 제한 안에 들도록 시도 횟수와 대기 시간을 함께 제한합니다.
+    payload = None
+    last: Exception | None = None
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_S) as resp:
+                payload = json.loads(resp.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as exc:
+            last = exc
+            if exc.code not in RETRY_STATUS or attempt == MAX_ATTEMPTS:
+                raise
+            time.sleep(1.2 * attempt)
+        except Exception as exc:
+            last = exc
+            if attempt == MAX_ATTEMPTS:
+                raise
+            time.sleep(1.2 * attempt)
+    if payload is None:
+        raise RuntimeError(f"모델 호출 실패: {last}")
 
     candidates = payload.get("candidates") or []
     if not candidates:
