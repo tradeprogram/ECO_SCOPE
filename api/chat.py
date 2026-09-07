@@ -17,12 +17,12 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 API_KEY = os.environ.get("GEMINI_API_KEY")
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 MAX_QUESTION = 500
-TIMEOUT_S = 25
+TIMEOUT_S = 45
 
 SYSTEM = """당신은 국립생태원 생태정보 플랫폼 '에코스코프'의 판독 결과 해설 담당자입니다.
 내륙습지의 Sentinel-1 SAR 개방수면 판독 결과를 읽고 담당자에게 설명합니다.
@@ -39,7 +39,8 @@ SYSTEM = """당신은 국립생태원 생태정보 플랫폼 '에코스코프'�
    같은 시기 VV 평균이 상승하였다면 수량은 유지된 상태에서 수생식물이 수면을 덮은 것입니다.
    optical 의 NDVI 가 함께 상승하였다면 그 해석이 광학 자료로도 확인된 것입니다.
 5. 공공기관 보고 문체의 한국어로, 간결하게 3~6문장으로 작성합니다.
-   존댓말을 사용하며 과장하지 않습니다."""
+   존댓말을 사용하며 과장하지 않습니다.
+6. 자기 역할이나 소속을 소개하지 말고 곧바로 답변 내용부터 씁니다."""
 
 
 def _answer(question: str, evidence: dict) -> str:
@@ -48,10 +49,18 @@ def _answer(question: str, evidence: dict) -> str:
         + json.dumps(evidence, ensure_ascii=False)
         + f"\n</자료>\n\n<질문>\n{question}\n</질문>\n\n답:"
     )
+    # Gemini 3.x 는 사고(thinking) 토큰이 maxOutputTokens 를 함께 소진합니다.
+    # 700 으로 두었더니 사고에 다 쓰이고 답변이 한 문장에서 잘렸습니다.
+    # 이 용도(주어진 자료 안에서 요약)에는 깊은 사고가 필요 없으므로 낮춥니다.
+    # thinkingBudget:0 은 이 모델에서 INVALID_ARGUMENT 로 거부되므로 thinkingLevel 을 씁니다.
     body = json.dumps(
         {
             "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0.2, "maxOutputTokens": 700},
+            "generationConfig": {
+                "temperature": 0.2,
+                "maxOutputTokens": 2048,
+                "thinkingConfig": {"thinkingLevel": "low"},
+            },
         }
     ).encode("utf-8")
 
@@ -66,10 +75,14 @@ def _answer(question: str, evidence: dict) -> str:
     candidates = payload.get("candidates") or []
     if not candidates:
         raise RuntimeError("모델이 응답 후보를 반환하지 않았습니다")
-    parts = candidates[0].get("content", {}).get("parts", [])
+    first = candidates[0]
+    parts = first.get("content", {}).get("parts", [])
     text = "".join(p.get("text", "") for p in parts).strip()
     if not text:
-        raise RuntimeError("빈 응답")
+        raise RuntimeError(f"빈 응답 (finishReason={first.get('finishReason')})")
+    if first.get("finishReason") == "MAX_TOKENS":
+        # 잘린 답을 온전한 답인 척 내보내지 않습니다.
+        text += chr(10) + chr(10) + "(응답이 길이 제한에 걸려 중간에 끊겼습니다. 질문을 좁혀 다시 물어보시기 바랍니다.)"
     return text
 
 
