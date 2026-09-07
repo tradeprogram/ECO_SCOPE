@@ -1,0 +1,16 @@
+# 배포에는 web/ 과 api/ 와 src/nie 만 필요합니다.
+# 경로 앞의 / 는 저장소 루트만 가리킵니다. 붙이지 않으면 web/data 까지 함께
+# 제외되어 화면 자료가 통째로 빠집니다(실제로 그렇게 배포된 적이 있습니다).
+/data/
+/docs/
+/notebooks/
+/scripts/
+/.claude/
+.env
+.env.local
+__pycache__/
+*.pyc
+
+# requirements.txt 는 분석 파이프라인용입니다(geopandas·rasterio·earthengine-api).
+# 서버리스 함수는 표준 라이브러리만 쓰므로 설치할 필요가 없고, 올리면 용량 한도에 걸립니다.
+/requirements.txt

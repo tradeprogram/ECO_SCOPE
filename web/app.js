@@ -41,6 +41,14 @@ const el = (tag, attrs = {}, kids = []) => {
 };
 const txt = (s) => document.createTextNode(s);
 
+/* 한글 조사. 받침 유무로 갈립니다 — "식생 면을" / "조사지역을" 처럼 어색해지지 않게 합니다. */
+function josa(word, withBatchim, withoutBatchim) {
+  const last = String(word || "").trim().slice(-1);
+  const code = last.charCodeAt(0);
+  if (Number.isNaN(code) || code < 0xac00 || code > 0xd7a3) return withBatchim;
+  return (code - 0xac00) % 28 ? withBatchim : withoutBatchim;
+}
+
 /* ---------------- 자료 적재 ---------------- */
 
 async function boot() {
@@ -598,7 +606,7 @@ function renderShape() {
   void metersPerUnit;
 
   $("shape-note").textContent = S.layer
-    ? `${S.layer.replace(/_/g, " ")}를 판독 경계 아래에 겹쳐 표시합니다.`
+    ? `${S.layer.replace(/_/g, " ")}${josa(S.layer, "을", "를")} 판독 경계 아래에 겹쳐 표시합니다.`
     : "판독에 사용한 경계입니다. 축척 막대는 실제 거리를 나타냅니다.";
   for (const b of document.querySelectorAll(".layer-btn")) {
     b.classList.toggle("on", (b.dataset.layer || "") === S.layer);

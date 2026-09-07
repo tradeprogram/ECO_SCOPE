@@ -10,7 +10,7 @@
   ],
   "functions": {
     "api/chat.py": { "maxDuration": 30 },
-    "api/ecomap.py": { "maxDuration": 30 }
+    "api/ecomap.py": { "maxDuration": 60, "includeFiles": "src/nie/**" }
   },
   "headers": [
     {

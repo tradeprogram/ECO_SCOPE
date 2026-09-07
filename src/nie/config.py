@@ -19,8 +19,14 @@ PROCESSED = DATA / "processed"
 WEB_DATA = ROOT / "web" / "data"
 CACHE = DATA / "cache"
 
+# 작업 디렉터리는 필요할 때만 만듭니다.
+# 서버리스(Vercel) 런타임은 파일시스템이 읽기 전용이라, import 시점에 mkdir 하면
+# 함수가 통째로 죽습니다. 그 환경에서는 경로 상수만 있으면 되므로 조용히 넘어갑니다.
 for _p in (AOI, RAW, INTERIM, PROCESSED, WEB_DATA, CACHE):
-    _p.mkdir(parents=True, exist_ok=True)
+    try:
+        _p.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
 
 
 def _load_dotenv() -> None:

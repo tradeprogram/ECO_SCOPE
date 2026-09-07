@@ -13,3 +13,6 @@ data/aoi/*.geojson
 
 # 화면용 산출물은 배포에 필요하므로 넣는다.
 !web/data/
+
+.vercel
+.env*
