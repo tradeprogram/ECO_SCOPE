@@ -94,16 +94,9 @@ h2{margin:0;font-size:15px;font-weight:650;letter-spacing:-.01em}
 .brand-text strong{font-size:15px;letter-spacing:-.02em}
 .brand-text span{font-size:11.5px;color:var(--muted)}
 
-.kpis{display:flex;gap:8px;flex:1;flex-wrap:wrap;justify-content:center}
-.kpi{
-  display:flex;flex-direction:column;align-items:center;
-  padding:5px 14px;border-radius:999px; line-height:1.2;
-  background:linear-gradient(135deg, rgba(255,255,255,.8), var(--green-soft));
-  border:1px solid rgba(255,255,255,.8);
-  box-shadow:0 4px 14px rgba(22,54,38,.06), inset 0 1px 0 rgba(255,255,255,.9);
-}
-.kpi b{font-size:14px;font-variant-numeric:tabular-nums;color:var(--green-deep)}
-.kpi span{font-size:10.5px;color:var(--ink-2)}
+/* 머리말은 기관 표시와 메뉴만 둡니다. 지표는 아래 개요 패널로 분리하였습니다. */
+.top-stamp{flex:1;text-align:center;font-size:11px;color:var(--muted);line-height:1.4}
+.top-stamp b{color:var(--ink-2);font-weight:600}
 
 .top-actions{display:flex;gap:6px;flex-shrink:0}
 .ghost{
@@ -114,13 +107,49 @@ h2{margin:0;font-size:15px;font-weight:650;letter-spacing:-.01em}
 }
 .ghost:hover{background:var(--green-soft);color:var(--green-deep)}
 
-/* ---------- 요지 안내 ---------- */
-.claim{
-  padding:10px 20px;font-size:12.5px;color:var(--ink-2);
-  background:linear-gradient(90deg, rgba(210,236,222,.62), rgba(255,255,255,.28) 72%, transparent);
-  border-bottom:1px solid rgba(255,255,255,.5);
+/* ---------- 개요 패널 ---------- */
+.overview{
+  display:grid; grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:16px; padding:16px 20px 0;
 }
-.claim b{color:var(--green-deep);font-variant-numeric:tabular-nums}
+.panel{
+  border-radius:var(--r); padding:14px 17px 15px;
+  background:var(--glass); border:var(--glass-line);
+  box-shadow:var(--glass-shadow);
+  backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  display:flex; flex-direction:column;
+}
+.panel h3{
+  margin:0 0 11px; font-size:11px; font-weight:700; letter-spacing:.06em;
+  color:var(--muted); text-transform:none;
+}
+.panel.accent{
+  background:linear-gradient(135deg, rgba(255,255,255,.86), var(--green-soft) 88%);
+}
+.panel-note{
+  margin:11px 0 0; padding-top:9px; border-top:1px dashed var(--line);
+  font-size:11.5px; line-height:1.6; color:var(--muted);
+}
+.panel-note b{color:var(--ink-2);font-variant-numeric:tabular-nums}
+
+.metrics{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; flex:1}
+.metric{display:flex; flex-direction:column; gap:2px}
+.metric b{
+  font-size:21px; font-weight:680; letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums; color:var(--green-deep); line-height:1.1;
+}
+.metric b small{font-size:12px;font-weight:600;margin-left:1px}
+.metric span{font-size:10.5px;color:var(--muted);line-height:1.35}
+.metric.water b{color:var(--water)}
+.metric.veg b{color:#5d8419}
+.metric.mute b{color:var(--muted)}
+
+.ratio{display:flex; align-items:baseline; gap:9px; flex:1}
+.ratio b{
+  font-size:40px; font-weight:700; letter-spacing:-.04em; line-height:1;
+  color:var(--green-deep); font-variant-numeric:tabular-nums;
+}
+.ratio span{font-size:12px;color:var(--ink-2);line-height:1.45}
 
 /* ---------- 골격 ---------- */
 .shell{display:grid;grid-template-columns:272px minmax(0,1fr);gap:16px;padding:16px 20px 44px}
@@ -399,7 +428,8 @@ button.agent-evidence-card{cursor:pointer;font:inherit}
   .shell{grid-template-columns:1fr}
   .rail{position:static;max-height:none}
   .row{grid-template-columns:1fr}
-  .kpis{order:3;width:100%;justify-content:flex-start}
+  .overview{grid-template-columns:1fr}
+  .top-stamp{display:none}
   .agent-launcher{right:14px;bottom:14px}
   .agent-panel{right:14px;bottom:76px}
 }

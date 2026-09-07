@@ -62,8 +62,7 @@ async function boot() {
   S.year = summary.years[summary.years.length - 1];
 
   buildYearSelect();
-  renderKpis();
-  renderClaim();
+  renderOverview();
   wireControls();
   renderAll();
 }
@@ -80,32 +79,47 @@ function buildYearSelect() {
   }
 }
 
-/* ---------------- 머리말 지표 ---------------- */
+/* ---------------- 머리말 · 개요 패널 ---------------- */
 
-function renderKpis() {
-  const s = S.summary;
-  const items = [
-    [fmt(s.n_observations), "SAR 관측"],
-    [fmt(s.n_wetlands), "판독 습지"],
-    [`${fmt(s.mean_revisit_days, 1)}일`, "평균 재방문"],
-    [fmt(s.n_wetlands_open_water), "개방수면 성립"],
-    [fmt(s.n_wetlands_with_veg_cover), "식생피복 관측"],
-  ];
-  $("kpis").innerHTML = items
-    .map(([b, t]) => `<div class="kpi"><b>${b}</b><span>${t}</span></div>`)
-    .join("");
+/* 지표를 머리말 한 줄에 몰아넣지 않고 성격별로 나눕니다.
+   관측 실적(얼마나 보았는가) / 판독 결과(무엇을 판정하였는가) / 현행 조사 대비(왜 필요한가). */
+
+function metric(value, unit, label, cls = "") {
+  return `<div class="metric ${cls}"><b>${value}${unit ? `<small>${unit}</small>` : ""}</b>` +
+         `<span>${label}</span></div>`;
 }
 
-function renderClaim() {
+function renderOverview() {
   const s = S.summary;
+  const first = s.years[0], last = s.years[s.years.length - 1];
+
+  $("top-stamp").innerHTML =
+    `판독 기간 <b>${first}~${last}년</b> · 자료 생성일 <b>${s.generated_utc.slice(0, 10)}</b>`;
+
+  $("metrics-obs").innerHTML =
+    metric(fmt(s.n_observations), "회", "SAR 관측") +
+    metric(fmt(s.n_wetlands), "개소", "판독 습지") +
+    metric(fmt(s.mean_revisit_days, 1), "일", "평균 재방문");
+  $("note-obs").innerHTML =
+    `${first}~${last}년 ${s.years.length}개년, 습지-연도 <b>${fmt(s.n_wetland_years)}</b>건을 처리하였습니다. ` +
+    `궤도는 습지별로 전 기간 연속 관측되는 relative orbit 하나로 고정하였습니다.`;
+
+  $("metrics-result").innerHTML =
+    metric(fmt(s.n_wetlands_open_water), "개소", "개방수면 지표 성립", "water") +
+    metric(fmt(s.n_wetlands_with_veg_cover), "개소", "식생피복 관측", "veg") +
+    metric(fmt(s.n_wetlands_no_open_water), "개소", "지표 비적용", "mute");
+  $("note-result").innerHTML =
+    `연중 최대 개방수면율이 5% 미만인 습지는 삼림습지·초본습지와 같이 SAR 로 관측할 수면이 ` +
+    `존재하지 않는 유형이므로 <b>지표를 적용하지 않습니다.</b> ` +
+    `고신뢰로 분류된 습지-연도는 <b>${fmt(s.n_wetland_years_high_conf)}</b>건입니다.`;
+
   const perYear = s.mean_obs_per_wetland_year;
-  const ratio = Math.round(perYear * 5); // 현장조사 5년 1주기 대비
-  $("claim").innerHTML =
-    `전국 자연환경조사 및 내륙습지조사는 <b>5년 1주기</b>로 시행됩니다. ` +
-    `동일 습지를 Sentinel-1 위성은 <b>연 ${fmt(perYear, 1)}회</b> 관측하므로, ` +
-    `1개 조사 주기 동안 <b>약 ${fmt(ratio)}배</b>의 관측 자료가 축적됩니다. ` +
-    `<span style="color:var(--muted)">판독 기간 ${s.years[0]}~${s.years[s.years.length - 1]}년 (${s.years.length}개년) · ` +
-    `자료 생성일 ${s.generated_utc.slice(0, 10)}</span>`;
+  const ratio = Math.round(perYear * 5);
+  $("ratio-figure").innerHTML =
+    `<b>${fmt(ratio)}배</b><span>1개 조사 주기(5년)<br>동안 축적되는 관측량</span>`;
+  $("note-ratio").innerHTML =
+    `전국 자연환경조사 및 내륙습지조사는 <b>5년 1주기</b>로 시행되며, 특정 습지가 해당 주기 내 ` +
+    `언제 조사되는지는 보장되지 않습니다. Sentinel-1 위성은 동일 습지를 <b>연 ${fmt(perYear, 1)}회</b> 관측합니다.`;
 }
 
 /* ---------------- 판독 대상 목록 ---------------- */

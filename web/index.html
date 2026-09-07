@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
-<link rel="stylesheet" href="style.css?v=20260907125724">
+<link rel="stylesheet" href="style.css?v=20260907142954">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="kpis" id="kpis"></div>
+  <div class="top-stamp" id="top-stamp"></div>
 
   <nav class="top-actions">
     <button class="ghost" data-panel="method">판독 방법</button>
@@ -26,7 +26,25 @@
   </nav>
 </header>
 
-<div class="claim" id="claim"></div>
+<section class="overview" id="overview">
+  <article class="panel" id="panel-obs">
+    <h3>관측 실적</h3>
+    <div class="metrics" id="metrics-obs"></div>
+    <p class="panel-note" id="note-obs"></p>
+  </article>
+
+  <article class="panel" id="panel-result">
+    <h3>판독 결과</h3>
+    <div class="metrics" id="metrics-result"></div>
+    <p class="panel-note" id="note-result"></p>
+  </article>
+
+  <article class="panel accent" id="panel-ratio">
+    <h3>현행 조사 대비</h3>
+    <div class="ratio" id="ratio-figure"></div>
+    <p class="panel-note" id="note-ratio"></p>
+  </article>
+</section>
 
 <main class="shell">
 
@@ -129,7 +147,7 @@
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js?v=20260907125724"></script>
-<script src="agent.js?v=20260907125724"></script>
+<script src="app.js?v=20260907142954"></script>
+<script src="agent.js?v=20260907142954"></script>
 </body>
 </html>
