@@ -555,15 +555,23 @@ function renderShape() {
                 `&width=${Math.max(Math.round(spanX * scale), 64)}&height=${Math.max(Math.round(spanY * scale), 64)}`;
     const img = el("image", {
       x: offX, y: offY, width: spanX * scale, height: spanY * scale,
-      href: src, preserveAspectRatio: "none", opacity: 0.85,
+      href: src, preserveAspectRatio: "none", opacity: 0.9,
     });
-    img.addEventListener("error", () => img.remove());
+    const note = el("text", { class: "shape-note", x: 4, y: 11 }, [txt("식생도 불러오는 중…")]);
+    img.addEventListener("load", () => note.remove());
+    img.addEventListener("error", () => {
+      img.remove();
+      note.textContent = "식생도를 불러오지 못했습니다";
+    });
     svg.appendChild(img);
+    svg.appendChild(note);
   }
 
+  // 레이어를 겹칠 때는 경계를 윤곽선만 남깁니다.
+  // 채움색이 불투명해 아래 깔린 식생도를 통째로 가리던 문제가 있었습니다.
   for (const ring of rings) {
     svg.appendChild(el("path", {
-      class: "shape-poly",
+      class: "shape-poly" + (S.layer ? " outline" : ""),
       d: ring.map((c, i) => `${i ? "L" : "M"}${X(c[0]).toFixed(1)},${Y(c[1]).toFixed(1)}`).join("") + "Z",
     }));
   }

@@ -190,6 +190,9 @@ table{border-collapse:collapse}
 .inset{min-width:0}
 .inset-label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:5px}
 .shape-poly{fill:var(--water-bg);stroke:var(--water);stroke-width:1.1;stroke-linejoin:round}
+/* 레이어를 겹칠 때는 채움을 비워 아래 자료가 보이게 합니다. */
+.shape-poly.outline{fill:none;stroke-width:1.6}
+.shape-note{font-size:9.5px;fill:var(--muted)}
 .scale-bar{stroke:var(--ink-2);stroke-width:1}
 .loc-land{fill:#e6ebe7;stroke:#c8d1cb;stroke-width:.6}
 .loc-dot{fill:var(--water);opacity:.45}
