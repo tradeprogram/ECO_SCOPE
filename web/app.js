@@ -101,11 +101,12 @@ function renderOverview() {
 
   $("metrics-obs").innerHTML =
     metric(fmt(s.n_observations), "회", "SAR 관측") +
+    metric(fmt(s.n_wetlands), "개소", "판독 습지") +
     metric(fmt(s.mean_revisit_days, 1), "일", "평균 재방문");
 
   $("metrics-target").innerHTML =
-    metric(fmt(s.n_wetlands), "개소", "판독 습지") +
     metric(fmt(s.n_wetlands_open_water), "개소", "개방수면 성립", "water") +
+    metric(fmt(s.n_wetlands_with_veg_cover), "개소", "식생피복 관측", "veg") +
     metric(fmt(s.n_wetlands_no_open_water), "개소", "지표 비적용", "mute");
 
   // 묶은 상관(by_state.open.r2)은 습지 간 크기 차이에 오염되므로 화면에 올리지 않습니다.
@@ -115,13 +116,14 @@ function renderOverview() {
   $("metrics-valid").innerHTML = v
     ? metric(v.presence_agreement.toFixed(2), "", "수면 유무 일치율", "water") +
       metric(fmt(v.n), "건", "대조 관측") +
-      metric((V.median_wetland_r2 ?? 0).toFixed(2), "", "면적 상관 R² (습지별 중앙값)", "warn")
+      metric((V.median_wetland_r2 ?? 0).toFixed(2), "", "면적 R² (중앙값)", "warn")
     : metric("—", "", "검증 자료 없음", "mute");
 
   const perYear = s.mean_obs_per_wetland_year;
   $("metrics-ratio").innerHTML =
     metric(fmt(Math.round(perYear * 5)), "배", "조사 1주기(5년) 관측량") +
-    metric(fmt(perYear, 1), "회", "습지당 연 관측");
+    metric(fmt(perYear, 1), "회", "습지당 연 관측") +
+    metric(`${first}~${String(last).slice(2)}`, "", "판독 기간");
 }
 
 /* ─────────── 목록 ─────────── */
@@ -143,10 +145,11 @@ function rowsForYear() {
     const q = S.search.toLowerCase();
     rows = rows.filter((r) => labelOf(r).toLowerCase().includes(q));
   }
+  // 고신뢰 우선, 같은 등급 안에서는 식생피복 비중이 큰 순.
+  // 첫 화면에 판정 결과가 다양하게 보여야 달력이 무엇을 말하는지 읽힙니다.
   const quality = (r) =>
-    (r.confidence === "high" && r.has_open_water ? 0 : 1) * 1e9 +
-    (r.name ? 0 : 1) * 1e6 -
-    Math.min(r.open_ha_max, 1e5);
+    (r.confidence === "high" && r.has_open_water ? 0 : 1) * 1e6 -
+    Math.round((r.veg_cover_share ?? 0) * 1000);
 
   const key = {
     quality,
@@ -290,35 +293,56 @@ function renderCalendar() {
   host.innerHTML = "";
   if (!rows.length) { $("calendar-meta").textContent = ""; $("calendar-foot").textContent = ""; return; }
 
-  const LAB = 126, PAD_R = 12, RH = 16, TOP = 24, SURVEY = 34;
-  const W = Math.max(720, host.parentElement.clientWidth - 2);
-  const plotW = W - LAB - PAD_R;
+  // 좌: 습지명 / 중앙: 1년 관측 스트립 / 우: 식생피복 비중
+  //   비중을 오른쪽에 함께 두면 각 행이 무엇을 뜻하는지 바로 읽힙니다.
+  const LAB = 148, PCT = 56, RH = 18, TOP = 34, SURVEY = 40;
+  // 행이 많으면 세로 스크롤바가 생기면서 폭이 줄어듭니다. 그 폭을 미리 빼지 않으면
+  // 가로로 넘쳐 오른쪽 식생피복 열이 잘립니다.
+  const willScroll = TOP + rows.length * RH + SURVEY > 420;
+  const W = Math.max(700, host.parentElement.clientWidth - (willScroll ? 20 : 4));
+  const plotW = W - LAB - PCT;
   const H = TOP + rows.length * RH + SURVEY;
   const x = (doy) => LAB + (doy / 365) * plotW;
 
   const svg = el("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
-  const monthStart = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  monthStart.forEach((d, i) => {
-    svg.appendChild(el("line", { class: "cal-grid", x1: x(d), y1: TOP - 10, x2: x(d), y2: TOP + rows.length * RH }));
-    if (i % 2 === 0) svg.appendChild(el("text", { class: "cal-axis", x: x(d) + 3, y: TOP - 13 }, [txt(MONTHS[i])]));
-  });
+  const bodyBottom = TOP + rows.length * RH;
+
+  // 월 구분 — 홀수 달에 옅은 띠를 깔아 시간축이 눈에 들어오게 합니다.
+  const monthStart = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+  for (let m = 0; m < 12; m++) {
+    if (m % 2 === 0) {
+      svg.appendChild(el("rect", {
+        x: x(monthStart[m]), y: TOP - 4, width: x(monthStart[m + 1]) - x(monthStart[m]),
+        height: bodyBottom - TOP + 4, fill: "#f6f8f7",
+      }));
+    }
+    svg.appendChild(el("text", {
+      class: "cal-axis", x: (x(monthStart[m]) + x(monthStart[m + 1])) / 2, y: TOP - 10,
+      "text-anchor": "middle",
+    }, [txt(String(m + 1))]));
+  }
+  svg.appendChild(el("text", { class: "cal-axis", x: LAB - 8, y: TOP - 10, "text-anchor": "end" },
+    [txt(`${S.year}년 · 월`)]));
+  svg.appendChild(el("text", { class: "cal-axis", x: W - 4, y: TOP - 10, "text-anchor": "end" },
+    [txt("식생피복")]));
 
   rows.forEach((r, i) => {
     const y = TOP + i * RH;
     const sel = S.sel === r.wid;
-    if (sel) svg.appendChild(el("rect", { x: LAB - 2, y, width: plotW + 2, height: RH - 2, fill: "#eef5f0" }));
+    if (sel) svg.appendChild(el("rect", { x: 0, y, width: W, height: RH - 1, fill: "#eef5f0" }));
+
     const lab = el("text", {
       class: "cal-row-label" + (sel ? " sel" : ""),
-      x: LAB - 8, y: y + 11, "text-anchor": "end",
-    }, [txt(trim(labelOf(r), 14))]);
+      x: LAB - 10, y: y + 12, "text-anchor": "end",
+    }, [txt(trim(labelOf(r), 17))]);
     lab.style.cursor = "pointer";
     lab.onclick = () => select(r.wid);
     svg.appendChild(lab);
 
     for (const o of r.observations) {
       const rect = el("rect", {
-        class: "cal-cell", x: x(dayOfYear(o.date)) - 2.4, y: y + 2,
-        width: 4.8, height: RH - 6, rx: 1, fill: cellColor(o, r.open_ratio_baseline),
+        class: "cal-cell", x: x(dayOfYear(o.date)) - 2.8, y: y + 3,
+        width: 5.6, height: RH - 7, rx: 1, fill: cellColor(o, r.open_ratio_baseline),
       });
       rect.onmouseenter = (e) => showTip(e, cellTip(r, o));
       rect.onmousemove = moveTip;
@@ -326,22 +350,33 @@ function renderCalendar() {
       rect.onclick = () => select(r.wid);
       svg.appendChild(rect);
     }
+
+    // 행 끝에 식생피복 비중 — 이 줄이 무엇을 말하는지 숫자로 못박습니다.
+    const share = r.veg_cover_share;
+    svg.appendChild(el("text", {
+      class: "cal-pct", x: W - 4, y: y + 12, "text-anchor": "end",
+      fill: share ? COLOR.veg : "var(--muted)",
+    }, [txt(share === null || share === undefined ? "—" : Math.round(share * 100) + "%")]));
   });
 
-  const sy = TOP + rows.length * RH + 10;
-  svg.appendChild(el("text", { class: "cal-row-label", x: LAB - 8, y: sy + 13, "text-anchor": "end" }, [txt("현행 현장조사")]));
-  svg.appendChild(el("rect", { class: "cal-survey", x: LAB, y: sy + 2, width: plotW, height: 16, rx: 2, fill: "none" }));
+  // 현행 현장조사 대비
+  const sy = bodyBottom + 12;
+  svg.appendChild(el("line", { class: "cal-grid", x1: 0, y1: sy - 4, x2: W, y2: sy - 4 }));
+  svg.appendChild(el("text", { class: "cal-row-label", x: LAB - 10, y: sy + 14, "text-anchor": "end" },
+    [txt("현행 현장조사")]));
+  svg.appendChild(el("rect", { class: "cal-survey", x: LAB, y: sy + 3, width: plotW, height: 16, rx: 2, fill: "none" }));
   svg.appendChild(el("text", {
-    class: "cal-survey-label", x: LAB + plotW / 2, y: sy + 13, "text-anchor": "middle",
+    class: "cal-survey-label", x: LAB + plotW / 2, y: sy + 14, "text-anchor": "middle",
     stroke: "#fff", "stroke-width": 3, "paint-order": "stroke",
-  }, [txt("5년 1주기")]));
+  }, [txt("5년에 1회 — 이 해에 이 습지를 조사했다는 보장이 없습니다")]));
 
   host.appendChild(svg);
 
   const nObs = rows.reduce((a, r) => a + r.n_obs, 0);
   $("calendar-meta").textContent = `${S.year}년 · ${rows.length}개소 · 관측 ${fmt(nObs)}회`;
   $("calendar-foot").textContent =
-    "가로 한 줄은 습지 한 곳, 칸 하나는 Sentinel-1 관측 1회입니다." +
+    `가로축은 ${S.year}년 1월~12월, 칸 하나는 Sentinel-1 관측 1회입니다. ` +
+    `색은 그날의 수면 상태이며, 오른쪽 숫자는 그 해 관측 중 식생피복으로 판정된 비중입니다.` +
     (all.length > rows.length ? ` 조건 부합 ${all.length}개소 중 상위 ${MAX_CAL_ROWS}개소를 표시합니다.` : "");
 }
 
