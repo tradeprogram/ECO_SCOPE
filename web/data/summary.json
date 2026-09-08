@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-08T11:01:06Z",
+  "generated_utc": "2026-09-08T11:42:05Z",
   "source_file": "_merged.jsonl",
   "years": [
     2018,
@@ -20,6 +20,6 @@
   "n_wetlands_open_water": 351,
   "n_wetlands_no_open_water": 115,
   "n_wetland_years_high_conf": 353,
-  "n_wetlands_with_veg_cover": 118,
+  "n_wetlands_with_cover_loss": 130,
   "thr_disagree_ha_p90": 18.97
 }

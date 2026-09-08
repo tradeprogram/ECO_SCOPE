@@ -1,0 +1,17 @@
+{
+  "n_wetlands": 60,
+  "n_pairs": 1075,
+  "level_ratio_median": 1.0046,
+  "level_ratio_iqr": [
+    0.9541,
+    1.1788
+  ],
+  "level_within_10pct": 38,
+  "mae_pct_of_water_median": 17.61,
+  "mae_pct_of_water_iqr": [
+    5.87,
+    40.31
+  ],
+  "wetland_r2_median": 0.07,
+  "wetland_r2_ge_05": 9
+}

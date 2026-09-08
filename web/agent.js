@@ -56,7 +56,7 @@
         mean_revisit_days: S.summary.mean_revisit_days,
         n_wetlands_open_water: S.summary.n_wetlands_open_water,
         n_wetlands_no_open_water: S.summary.n_wetlands_no_open_water,
-        n_wetlands_with_veg_cover: S.summary.n_wetlands_with_veg_cover,
+        n_wetlands_with_cover_loss: S.summary.n_wetlands_with_cover_loss,
         generated_utc: S.summary.generated_utc,
       },
       selected: cur && {
@@ -71,8 +71,9 @@
         open_ha_max: cur.open_ha_max,
         open_ha_med: cur.open_ha_med,
         open_ha_min: cur.open_ha_min,
+        n_covered: cur.n_covered,
+        covered_share: cur.covered_share,
         n_veg_covered: cur.n_veg_covered,
-        veg_cover_share: cur.veg_cover_share,
         thr_disagree_ha_max: cur.thr_disagree_ha_max,
         rel_orbit: cur.rel_orbit,
         orbit_pass: cur.orbit_pass,
@@ -84,7 +85,7 @@
       series_years: sel
         ? sel.all.map((r) => ({
             year: r.year, open_ha_max: r.open_ha_max, n_obs: r.n_obs,
-            n_veg_covered: r.n_veg_covered, confidence: r.confidence,
+            n_covered: r.n_covered, confidence: r.confidence,
           }))
         : [],
       orbit_history: orbit && { chosen_orbit: orbit.chosen_orbit, by_orbit_year: orbit.by_orbit_year },
@@ -141,18 +142,31 @@
         `습지 전체 면적 ${fmt(s.area_ha)} ha 대비 최대 ${Math.round((s.open_ha_max / s.area_ha) * 100)}% 가 개방수면으로 판독되었습니다.`;
     }
     if (has("여름", "줄어", "감소", "왜", "원인")) {
-      const veg = s.observations.filter((o) => o.state === "veg_covered");
-      if (!veg.length) return `${s.name}의 ${s.year}년 관측에서는 식생피복으로 분류된 관측이 확인되지 않았습니다.`;
-      const vvVeg = veg.reduce((a, o) => a + o.vv_db, 0) / veg.length;
+      const cov = s.observations.filter((o) => o.state === "veg_covered" || o.state === "dry_suspect");
+      if (!cov.length) return `${s.name}의 ${s.year}년 관측에서는 개방수면이 사라진 관측이 확인되지 않았습니다.`;
+      const vvCov = cov.reduce((a, o) => a + o.vv_db, 0) / cov.length;
       const open = s.observations.filter((o) => o.state === "open");
       const vvOpen = open.length ? open.reduce((a, o) => a + o.vv_db, 0) / open.length : null;
-      let out = `${s.name}${josa(s.name, "은", "는")} ${s.year}년 관측 ${s.n_obs}회 중 ${veg.length}회가 식생피복으로 분류되었습니다 ` +
-        `(${veg[0].date} ~ ${veg[veg.length - 1].date}).\n` +
-        `해당 구간의 VV 평균은 ${fmt(vvVeg, 1)} dB 로, 개방수면 관측의 ${vvOpen === null ? "—" : fmt(vvOpen, 1)} dB 보다 현저히 높습니다.\n` +
-        `수량이 감소한 경우 후방산란도 함께 낮아져야 합니다. 반대로 상승하였다는 것은 수면 위에 산란체가 형성되었음을 의미하며, 수생식물에 의한 피복으로 해석합니다.`;
+      const summer = cov.filter((o) => { const m = Number(o.date.slice(5, 7)); return m >= 5 && m <= 9; });
+      let out = `${s.name}${josa(s.name, "은", "는")} ${s.year}년 관측 ${s.n_obs}회 중 ${cov.length}회에서 ` +
+        `개방수면이 기준선의 30% 아래로 내려갔습니다 (${cov[0].date} ~ ${cov[cov.length - 1].date}). ` +
+        `그중 ${summer.length}회가 5~9월에 관측되었습니다.
+` +
+        `해당 구간의 VV 평균은 ${fmt(vvCov, 1)} dB 로, 개방수면 관측의 ${vvOpen === null ? "—" : fmt(vvOpen, 1)} dB 보다 높습니다.
+
+` +
+        `다만 이 상승만으로 개별 관측의 원인을 식생이라고 판정하지는 않습니다. 습지 17개소·짝지음 173건을 ` +
+        `Sentinel-2 NDVI 와 대조한 결과 −13 dB 임계의 특이도는 0.10 으로, ` +
+        `식생이 없는 관측의 90%도 같은 구간으로 분류되었습니다. ` +
+        `본 시스템이 관측한 사실은 '개방수면이 사라졌다'까지입니다.
+` +
+        `계절로는 구분됩니다. 생장기 소실 관측의 광학 구성은 식생 55% · 비식생 15%, ` +
+        `비생장기는 14% · 28% 입니다. 집계 수준에서 여름철 소실은 대체로 식생에 의한 것으로 봅니다.`;
       if (s.optical.length) {
         const hi = [...s.optical].sort((a, b) => b.ndvi - a.ndvi)[0];
-        out += `\n\nSentinel-2 광학 자료도 동일한 결과를 보입니다. ${hi.date} 기준 NDVI ${fmt(hi.ndvi, 2)}, NDWI ${fmt(hi.ndwi, 2)} 로, 광학과 SAR 이 독립적으로 일치합니다.`;
+        out += `
+
+본 습지의 Sentinel-2 관측에서는 ${hi.date} 기준 NDVI ${fmt(hi.ndvi, 2)}, NDWI ${fmt(hi.ndwi, 2)} 로 확인됩니다.`;
       }
       return out;
     }
@@ -194,7 +208,7 @@
         `1. 수위. SAR 는 수면의 면적을 관측하며 수심은 관측하지 않습니다.\n` +
         `2. 식생 하부 침수. 이중반사 신호는 논의 담수 관리 주기와 동일한 대역에서 변동하여 오탐이 심합니다.\n` +
         `3. 개방수면이 없는 습지의 상태. 본 판독에서 ${ev.summary.n_wetlands_no_open_water}개소가 이에 해당합니다.\n\n` +
-        `아울러 식생피복 판정의 VV 임계 −13 dB 는 시범 습지 1개소에서 도출한 잠정값이며, 전국 보정이 완료되기 전까지 확정값이 아닙니다.`;
+        `4. 개방수면이 사라진 개별 관측의 원인. VV 임계 −13 dB 는 특이도 0.10 (Youden J 0.085) 으로 개별 판정 근거가 되지 못하여 실험 항목으로 내렸습니다.`;
     }
     return `본 화면은 판독 결과에 포함된 사항에 한하여 답변합니다.\n` +
       `현재 선택: ${s.name} (${s.year}년, 관측 ${s.n_obs}회, 개방수면 최대 ${fmt(s.open_ha_max, 1)} ha, 신뢰도 ${s.confidence === "high" ? "고" : "저"}).\n` +

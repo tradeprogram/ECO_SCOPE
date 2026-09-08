@@ -13,12 +13,33 @@ Otsu 는 **민감도 검사**로만 남긴다. 둘이 크게 갈리는 습지-�
     open_ratio      개방수면율 = 개방수면적 / 습지면적
     baseline        그 습지·그 해 open_ratio 의 90퍼센타일 (최대 개방 상태)
     covered         open_ratio < COVER_RATIO x baseline  (개방수면이 사라진 관측)
-    veg_covered     covered 이면서 VV 평균 > VV_VEG_DB   (식생이 덮음)
-    dry_suspect     covered 이면서 VV 평균 <= VV_VEG_DB  (물도 산란체도 없음 = 건조 의심)
+    covered_share   covered 관측 비중 — **주지표**
+    veg_covered     covered 이면서 VV 평균 > VV_VEG_DB   (식생 추정, 실험적)
+    dry_suspect     covered 이면서 VV 평균 <= VV_VEG_DB  (산란체 없음 추정, 실험적)
 
 VV_VEG_DB = -13 은 파일럿(우포늪 2024)에서 왔다. 개방수면 관측의 VV 평균은
 -16~-22 dB, 식생피복 관측은 -8.8~-12 dB 로 갈렸고 그 사이가 비어 있었다.
-**전국 보정 전까지는 잠정값이다.** 습지 유형별로 다시 잡아야 한다.
+
+**전국 자료로 이 임계를 검사했고, 갈라지지 않았다.**
+    습지 17개소·짝지음 173건에서 covered 관측의 VV 를 같은 시기 Sentinel-2 NDVI 와
+    대조했다(scripts/calibrate_veg_threshold.py).
+        VV 와 NDVI 의 상관   전 기간 r=+0.14 / 생장기 r=-0.13 — 부호가 뒤집힌다
+        -13.0 dB 의 성능     민감도 0.98 / **특이도 0.10** / Youden J 0.085
+                            식생이 없는 관측의 90% 도 '식생피복'으로 간다
+        최적 임계            -13.0 dB. 파일럿 값과 같지만, 같다는 사실에 의미가 없다.
+                            어느 지점에서 잘라도 J 가 이 수준이기 때문이다.
+    두 분포가 거의 포개진다 — 식생 5/50/95 = -12.8/-11.2/-9.9,
+    비식생 -13.7/-10.7/-9.7 dB. covered 안에서 VV 는 녹색도에 대한 정보를 갖고 있지
+    않다. 실제 판정 결과도 covered 의 93.8% 가 veg_covered 다 — 거의 상수 분류기다.
+
+**그래서 주지표는 veg_cover_share 가 아니라 covered_share 다.**
+    측정된 것은 '개방수면이 사라졌다'까지이고, 그 원인이 식생인지는 SAR 단독으로
+    판정할 수 없다. veg_covered / dry_suspect 는 원자료에 남기되 실험적 구분으로
+    표시하고, 화면과 제안서는 covered_share 를 쓴다.
+
+    다만 원인을 아주 모르는 것은 아니다. 계절이 VV 보다 잘 예측한다 —
+    생장기(5~9월) covered 관측의 광학 구성은 식생 55% / 비식생 15%, 비생장기는
+    14% / 28% 로 뒤집힌다. 집계 수준에서는 '여름철 소실은 대개 식생'이라고 말할 수 있다.
 """
 
 from __future__ import annotations
@@ -157,6 +178,11 @@ def wetland_year(rec: dict, force_open_water: bool | None = None) -> dict | None
         "open_ha_med": round(_percentile([o["open_ha"] for o in obs], 0.50), 2),
         "open_ha_min": round(min(o["open_ha"] for o in obs), 2),
         "open_ratio_baseline": round(baseline, 4),
+        "n_covered": n_veg + n_dry,
+        # 주지표. 측정된 것은 여기까지다 — 개방수면이 사라진 관측이 얼마나 되는가.
+        "covered_share": round((n_veg + n_dry) / len(obs), 3) if has_open_water else None,
+        # 아래 둘은 실험적 구분이다. VV 로는 원인을 가르지 못한다는 것을 확인했다.
+        # 파일 머리말의 '전국 자료로 이 임계를 검사했고' 항을 보라.
         "n_veg_covered": n_veg,
         "n_dry_suspect": n_dry,
         "veg_cover_share": round(n_veg / len(obs), 3) if has_open_water else None,
@@ -218,7 +244,7 @@ def summarize(path: Path) -> dict:
     n_scene_total = sum(x["n_obs"] for x in ok)
     wids = sorted({x["wid"] for x in ok})
     open_wy = [x for x in ok if x["has_open_water"]]
-    covered = [x for x in open_wy if x["n_veg_covered"] > 0]
+    covered = [x for x in open_wy if x["n_covered"] > 0]
     high_conf = [x for x in open_wy if x["confidence"] == "high"]
 
     return {
@@ -235,7 +261,7 @@ def summarize(path: Path) -> dict:
         "n_wetlands_open_water": len({x["wid"] for x in open_wy}),
         "n_wetlands_no_open_water": len(wids) - len({x["wid"] for x in open_wy}),
         "n_wetland_years_high_conf": len(high_conf),
-        "n_wetlands_with_veg_cover": len({x["wid"] for x in covered}),
+        "n_wetlands_with_cover_loss": len({x["wid"] for x in covered}),
         "thr_disagree_ha_p90": round(_percentile([x["thr_disagree_ha_max"] for x in open_wy], 0.9), 2) if open_wy else None,
         "wetland_years": ok,
     }

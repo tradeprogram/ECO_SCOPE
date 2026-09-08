@@ -1,0 +1,68 @@
+{
+  "pair_days": 3,
+  "ndvi_veg": 0.4,
+  "ndvi_bare": 0.15,
+  "cloud_max": 20.0,
+  "valid_min": 0.8,
+  "wetlands": 17,
+  "pairs": 173,
+  "current_db": -13.0,
+  "splits": [
+    {
+      "tag": "전 기간",
+      "n_veg": 56,
+      "n_bare": 39,
+      "best_db": -13.0,
+      "j": 0.0847,
+      "sens": 0.9821,
+      "spec": 0.1026,
+      "current_j": 0.0847,
+      "current_sens": 0.9821,
+      "current_spec": 0.1026,
+      "veg_vv_q": [
+        -12.81,
+        -11.17,
+        -9.93
+      ],
+      "bare_vv_q": [
+        -13.67,
+        -10.69,
+        -9.69
+      ]
+    }
+  ],
+  "by_type": [
+    {
+      "type": "하천습지",
+      "wetlands": 15,
+      "n_veg": 53,
+      "n_bare": 39,
+      "best_db": -13.0,
+      "j": 0.0837
+    }
+  ],
+  "vv_ndvi_corr": {
+    "전 기간": 0.1366,
+    "생장기": -0.1325
+  },
+  "covered_composition": {
+    "전 기간": {
+      "n": 173,
+      "veg": 56,
+      "mid": 78,
+      "bare": 39
+    },
+    "생장기(5~9월)": {
+      "n": 78,
+      "veg": 43,
+      "mid": 23,
+      "bare": 12
+    },
+    "비생장기": {
+      "n": 95,
+      "veg": 13,
+      "mid": 55,
+      "bare": 27
+    }
+  }
+}

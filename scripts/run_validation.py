@@ -136,6 +136,36 @@ def main() -> None:
     )
     rep["n_wetlands_validated"] = len(r2s)
 
+    # R² 가 낮다고 면적이 틀린 것은 아닙니다. R² 는 '변동을 얼마나 설명하는가'라서
+    # 변동이 작은 습지에서는 수준이 정확해도 0 에 가깝게 나옵니다.
+    # 수준(level)과 변동(variation)을 갈라 따로 적습니다.
+    def _q(a, p):
+        return a[min(len(a) - 1, int(p * len(a)))] if a else None
+
+    ratios, mae_w = [], []
+    for m in rep["by_wetland"].values():
+        mo, ms = m.get("mean_opt_ha"), m.get("mean_sar_ha")
+        if not mo or ms is None:
+            continue
+        ratios.append(ms / mo)
+        mae_w.append(100 * m["mae_ha"] / mo)
+    ratios.sort(); mae_w.sort()
+    rep["area_level_vs_variation"] = {
+        "설명": ("수준은 맞는지, 변동을 따라가는지를 갈라 봅니다. "
+               "면적 절대값을 산출물에서 뺀 근거는 '변동' 쪽입니다."),
+        "n_wetlands": len(ratios),
+        "level_ratio_median": round(_q(ratios, 0.5), 3) if ratios else None,
+        "level_ratio_iqr": [round(_q(ratios, 0.25), 3), round(_q(ratios, 0.75), 3)] if ratios else None,
+        "level_within_10pct": sum(1 for r in ratios if 0.9 <= r <= 1.1),
+        "mae_pct_of_water_median": round(_q(mae_w, 0.5), 1) if mae_w else None,
+        "mae_pct_of_water_iqr": [round(_q(mae_w, 0.25), 1), round(_q(mae_w, 0.75), 1)] if mae_w else None,
+        "wetland_r2_median": rep["median_wetland_r2"],
+        "wetland_r2_ge_05": sum(1 for x in r2s if x >= 0.5),
+        "판정": ("치우침은 없습니다(평균비 중앙 ~1.0). 다만 개별 습지의 수준 오차가 크고"
+               "(MAE 중앙 수면적의 ~18%), 시간 변동은 따라가지 못합니다(습지별 R² 중앙 ~0.07). "
+               "'이 습지 수면이 몇 ha 인가' 도 정밀하지 않고, '지난달보다 늘었나' 는 답할 수 없습니다."),
+    }
+
     out = WEB_DATA / "validation.json"
     out.write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
 

@@ -104,7 +104,7 @@ def build(sources: list[str]) -> None:
     print(f"습지 {head['n_wetlands']}개소 / 습지-연도 {head['n_wetland_years']}건 "
           f"/ 관측 {head['n_observations']:,}회")
     print(f"평균 재방문 {head['mean_revisit_days']}일, "
-          f"식생피복 관측된 습지 {head['n_wetlands_with_veg_cover']}개소")
+          f"개방수면 소실 관측된 습지 {head['n_wetlands_with_cover_loss']}개소")
     # 3.5) 관측 가능성 이력 — 궤도별 연 관측수.
     #      판독보다 이게 먼저다. 관측이 없어서 생긴 공백을 '변화 없음'으로 읽지 않기 위한 것.
     #    한 습지가 여러 배치에 걸쳐 있으면 연도 범위가 서로 다릅니다.
@@ -175,4 +175,19 @@ def build(sources: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    build(sys.argv[1:] or ["deep.jsonl", "pilot.jsonl"])
+    # 기본값은 **에코뱅크 정본 경계로 판독한 원자료 전부**입니다.
+    #
+    # 두 번 틀렸던 자리라 적어둡니다.
+    #   1) 기본값이 deep/pilot 둘뿐이어서, 인자 없이 돌리면 습지 466개소가 18개소로
+    #      줄어든 산출물이 조용히 덮어써졌습니다.
+    #   2) 그래서 '원자료 전부'로 바꿨더니 이번엔 OSM 부트스트랩 시절 파일
+    #      (breadth/deep/pilot)이 섞여 들어왔습니다. 우포늪이 두 번 세어지고
+    #      이름 없는 습지 92개소가 화면에 올라왔습니다. OSM 경계로는 이 제품을
+    #      만들 수 없다는 것이 docs/30_findings.md §6 의 결론입니다.
+    #
+    # 새 배치를 만들면 여기에 추가하되, **정본 경계로 판독한 것만** 넣으십시오.
+    DEFAULT = [
+        "nie2025.jsonl",     # 전국 확대 판독 (정본 경계)
+        "nie_deep.jsonl",    # 다년 심층 판독 + 광학 교차검증 (정본 경계)
+    ]
+    build(sys.argv[1:] or DEFAULT)
