@@ -135,12 +135,6 @@
     const has = (...k) => k.some((w) => q.includes(w));
     if (!s) return "좌측 목록에서 습지를 먼저 선택해 주시기 바랍니다. 선택하신 습지의 판독 결과를 근거로 답변드리겠습니다.";
 
-    if (has("가장 넓", "최대", "언제")) {
-      const best = [...s.observations].sort((a, b) => b.open_ha - a.open_ha)[0];
-      return `${s.name}의 ${s.year}년 개방수면이 가장 넓었던 관측일은 ${best.date}이며, 면적은 ${fmt(best.open_ha, 1)} ha 입니다.\n` +
-        `연중 P90 기준 최대 개방수면적은 ${fmt(s.open_ha_max, 1)} ha, 중앙값은 ${fmt(s.open_ha_med, 1)} ha 입니다.\n` +
-        `습지 전체 면적 ${fmt(s.area_ha)} ha 대비 최대 ${Math.round((s.open_ha_max / s.area_ha) * 100)}% 가 개방수면으로 판독되었습니다.`;
-    }
     if (has("여름", "줄어", "감소", "왜", "원인")) {
       const cov = s.observations.filter((o) => o.state === "veg_covered" || o.state === "dry_suspect");
       if (!cov.length) return `${s.name}의 ${s.year}년 관측에서는 개방수면이 사라진 관측이 확인되지 않았습니다.`;
@@ -170,7 +164,13 @@
       }
       return out;
     }
-    if (has("저신뢰", "신뢰", "믿을", "정확")) {
+    if (has("가장 넓", "최대", "언제", "얼마", "넓이", "면적", "몇 ha", "몇ha")) {
+      const best = [...s.observations].sort((a, b) => b.open_ha - a.open_ha)[0];
+      return `${s.name}의 ${s.year}년 개방수면이 가장 넓었던 관측일은 ${best.date}이며, 면적은 ${fmt(best.open_ha, 1)} ha 입니다.\n` +
+        `연중 P90 기준 최대 개방수면적은 ${fmt(s.open_ha_max, 1)} ha, 중앙값은 ${fmt(s.open_ha_med, 1)} ha 입니다.\n` +
+        `습지 전체 면적 ${fmt(s.area_ha)} ha 대비 최대 ${Math.round((s.open_ha_max / s.area_ha) * 100)}% 가 개방수면으로 판독되었습니다.`;
+    }
+    if (has("저신뢰", "신뢰", "믿을", "정확", "검증", "맞나", "오차")) {
       if (!s.has_open_water) {
         return `${s.name}${josa(s.name, "은", "는")} 연중 최대 개방수면율이 5% 미만이므로 개방수면 지표를 적용하지 않았습니다.\n` +
           `삼림습지·초본습지와 같이 SAR 로 관측할 수면이 존재하지 않는 유형으로 판단됩니다. 저신뢰가 아니라 지표 비적용에 해당합니다.`;
@@ -191,7 +191,7 @@
         `1개 법정조사 주기(5년) 동안 약 ${fmt(Math.round(su.mean_obs_per_wetland_year * 5))}회의 관측 자료가 축적됩니다.\n` +
         `본 판독에서는 습지 ${su.n_wetlands}개소에 대하여 관측 ${fmt(su.n_observations)}회를 실제로 처리하였습니다.`;
     }
-    if (has("궤도", "orbit", "관측 가능", "공백", "끊")) {
+    if (has("궤도", "orbit", "관측 가능", "관측가능", "공백", "끊", "위성", "재방문")) {
       const oh = ev.orbit_history;
       if (!oh) return "선택하신 습지의 관측 가능성 이력이 아직 수집되지 않았습니다.";
       const lines = Object.entries(oh.by_orbit_year)
@@ -203,14 +203,16 @@
         `2025년 회복은 Sentinel-1C(2024년 12월 발사)가 동일 궤도면을 승계한 결과입니다.\n` +
         `본 시계열은 전 기간 연속 관측되는 orbit ${oh.chosen_orbit}으로 고정하여 판독하였습니다.`;
     }
-    if (has("못 하는", "한계", "안 되는", "못하는", "주의")) {
+    if (has("못 하는", "못하는", "한계", "안 되는", "안되는", "판단할 수 없", "알 수 없",
+            "판정할 수 없", "주의", "유의", "제약", "불가")) {
       return `본 판독 결과로 판단할 수 없는 사항은 다음과 같습니다.\n\n` +
         `1. 수위. SAR 는 수면의 면적을 관측하며 수심은 관측하지 않습니다.\n` +
         `2. 식생 하부 침수. 이중반사 신호는 논의 담수 관리 주기와 동일한 대역에서 변동하여 오탐이 심합니다.\n` +
         `3. 개방수면이 없는 습지의 상태. 본 판독에서 ${ev.summary.n_wetlands_no_open_water}개소가 이에 해당합니다.\n\n` +
         `4. 개방수면이 사라진 개별 관측의 원인. VV 임계 −13 dB 는 특이도 0.10 (Youden J 0.085) 으로 개별 판정 근거가 되지 못하여 실험 항목으로 내렸습니다.`;
     }
-    return `본 화면은 판독 결과에 포함된 사항에 한하여 답변합니다.\n` +
+    return `해당 질의에 대응하는 판독 항목을 찾지 못하였습니다. 개방수면 면적·감소 원인·` +
+      `판독 신뢰도·관측 궤도·판독 한계에 관하여 질의하실 수 있습니다.\n` +
       `현재 선택: ${s.name} (${s.year}년, 관측 ${s.n_obs}회, 개방수면 최대 ${fmt(s.open_ha_max, 1)} ha, 신뢰도 ${s.confidence === "high" ? "고" : "저"}).\n` +
       `아래 후속 질문을 이용하시거나, 습지 또는 판독 연도를 변경한 뒤 다시 질의해 주시기 바랍니다.`;
   }
