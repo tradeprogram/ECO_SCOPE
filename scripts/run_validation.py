@@ -127,6 +127,15 @@ def main() -> None:
         for wid, v in per_wetland.items()
     }
 
+    # 묶은 상관은 습지 간 크기 차이에 오염됩니다. 화면이 인용할 수 있는 값은
+    # 습지별 상관의 중앙값입니다.
+    r2s = sorted(m["r2"] for m in rep["by_wetland"].values() if m.get("r2") is not None)
+    rep["median_wetland_r2"] = (
+        round(r2s[len(r2s) // 2] if len(r2s) % 2 else (r2s[len(r2s) // 2 - 1] + r2s[len(r2s) // 2]) / 2, 3)
+        if r2s else None
+    )
+    rep["n_wetlands_validated"] = len(r2s)
+
     out = WEB_DATA / "validation.json"
     out.write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
 

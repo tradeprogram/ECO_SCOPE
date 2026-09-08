@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-07T09:50:40Z",
+  "generated_utc": "2026-09-08T10:11:54Z",
   "source_file": "_merged.jsonl",
   "years": [
     2018,
@@ -11,15 +11,15 @@
     2024,
     2025
   ],
-  "n_wetlands": 101,
-  "n_wetland_years": 167,
-  "n_wetland_years_dropped": 2,
-  "n_observations": 4894,
-  "mean_obs_per_wetland_year": 29.3,
-  "mean_revisit_days": 12.7,
-  "n_wetlands_open_water": 24,
-  "n_wetlands_no_open_water": 77,
-  "n_wetland_years_high_conf": 30,
-  "n_wetlands_with_veg_cover": 18,
-  "thr_disagree_ha_p90": 33.64
+  "n_wetlands": 466,
+  "n_wetland_years": 522,
+  "n_wetland_years_dropped": 23,
+  "n_observations": 15637,
+  "mean_obs_per_wetland_year": 30.0,
+  "mean_revisit_days": 12.3,
+  "n_wetlands_open_water": 351,
+  "n_wetlands_no_open_water": 115,
+  "n_wetland_years_high_conf": 353,
+  "n_wetlands_with_veg_cover": 118,
+  "thr_disagree_ha_p90": 18.97
 }

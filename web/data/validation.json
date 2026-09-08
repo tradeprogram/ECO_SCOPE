@@ -1,307 +1,348 @@
 {
  "overall": {
-  "n": 164,
-  "mae_ha": 49.24,
-  "rmse_ha": 74.55,
-  "bias_ha": -14.47,
-  "mae_pct_of_wetland": 9.28,
-  "pearson_r": 0.13,
-  "r2": 0.017,
-  "presence_agreement": 0.896,
+  "n": 586,
+  "mae_ha": 152.15,
+  "rmse_ha": 401.96,
+  "bias_ha": -100.63,
+  "mae_pct_of_wetland": 12.41,
+  "pearson_r": 0.957,
+  "r2": 0.915,
+  "presence_agreement": 0.749,
   "presence_table": {
-   "둘다_수면": 111,
-   "SAR만": 13,
-   "광학만": 4,
-   "둘다_없음": 36
+   "둘다_수면": 404,
+   "SAR만": 49,
+   "광학만": 98,
+   "둘다_없음": 35
   },
-  "mean_sar_ha": 43.77,
-  "mean_opt_ha": 58.24
+  "mean_sar_ha": 858.14,
+  "mean_opt_ha": 958.77
  },
  "by_state": {
   "open": {
-   "n": 100,
-   "mae_ha": 71.23,
-   "rmse_ha": 91.04,
-   "bias_ha": -16.92,
-   "mae_pct_of_wetland": 16.65,
-   "pearson_r": -0.288,
-   "r2": 0.083,
-   "presence_agreement": 0.93,
+   "n": 379,
+   "mae_ha": 195.18,
+   "rmse_ha": 381.17,
+   "bias_ha": -115.88,
+   "mae_pct_of_wetland": 10.77,
+   "pearson_r": 0.966,
+   "r2": 0.932,
+   "presence_agreement": 0.926,
    "presence_table": {
-    "둘다_수면": 93,
-    "SAR만": 7,
+    "둘다_수면": 351,
+    "SAR만": 28,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 65.54,
-   "mean_opt_ha": 82.46
+   "mean_sar_ha": 1318.54,
+   "mean_opt_ha": 1434.41
   },
   "veg_covered": {
-   "n": 55,
-   "mae_ha": 5.68,
-   "rmse_ha": 16.62,
-   "bias_ha": -2.35,
-   "mae_pct_of_wetland": 0.79,
-   "pearson_r": 0.615,
-   "r2": 0.378,
-   "presence_agreement": 0.836,
+   "n": 194,
+   "mae_ha": 22.07,
+   "rmse_ha": 224.83,
+   "bias_ha": -21.47,
+   "mae_pct_of_wetland": 25.97,
+   "pearson_r": 0.983,
+   "r2": 0.966,
+   "presence_agreement": 0.412,
    "presence_table": {
-    "둘다_수면": 10,
-    "SAR만": 5,
-    "광학만": 4,
-    "둘다_없음": 36
+    "둘다_수면": 45,
+    "SAR만": 18,
+    "광학만": 96,
+    "둘다_없음": 35
    },
-   "mean_sar_ha": 7.21,
-   "mean_opt_ha": 9.56
+   "mean_sar_ha": 2.4,
+   "mean_opt_ha": 23.87
   },
   "dry_suspect": {
-   "n": 9,
-   "mae_ha": 71.17,
-   "rmse_ha": 86.65,
-   "bias_ha": -61.3,
-   "mae_pct_of_wetland": 12.88,
-   "pearson_r": -0.329,
-   "r2": 0.108,
-   "presence_agreement": 0.889,
+   "n": 13,
+   "mae_ha": 838.61,
+   "rmse_ha": 1514.24,
+   "bias_ha": -837.54,
+   "mae_pct_of_wetland": 70.72,
+   "pearson_r": 0.924,
+   "r2": 0.853,
+   "presence_agreement": 0.615,
    "presence_table": {
     "둘다_수면": 8,
-    "SAR만": 1,
-    "광학만": 0,
+    "SAR만": 3,
+    "광학만": 2,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 25.25,
-   "mean_opt_ha": 86.55
+   "mean_sar_ha": 205.97,
+   "mean_opt_ha": 1043.51
   }
  },
  "by_offset": {
   "0일": {
-   "n": 42,
-   "mae_ha": 35.59,
-   "rmse_ha": 68.67,
-   "bias_ha": -7.15,
-   "mae_pct_of_wetland": 5.72,
-   "pearson_r": 0.212,
-   "r2": 0.045,
-   "presence_agreement": 0.857,
+   "n": 106,
+   "mae_ha": 97.92,
+   "rmse_ha": 301.72,
+   "bias_ha": -23.45,
+   "mae_pct_of_wetland": 9.3,
+   "pearson_r": 0.968,
+   "r2": 0.937,
+   "presence_agreement": 0.726,
    "presence_table": {
-    "둘다_수면": 19,
-    "SAR만": 4,
-    "광학만": 2,
-    "둘다_없음": 17
-   },
-   "mean_sar_ha": 31.13,
-   "mean_opt_ha": 38.28
-  },
-  "1일": {
-   "n": 54,
-   "mae_ha": 45.69,
-   "rmse_ha": 66.06,
-   "bias_ha": -8.78,
-   "mae_pct_of_wetland": 8.04,
-   "pearson_r": 0.222,
-   "r2": 0.049,
-   "presence_agreement": 0.944,
-   "presence_table": {
-    "둘다_수면": 38,
-    "SAR만": 2,
-    "광학만": 1,
-    "둘다_없음": 13
-   },
-   "mean_sar_ha": 47.06,
-   "mean_opt_ha": 55.84
-  },
-  "2~3일": {
-   "n": 68,
-   "mae_ha": 60.5,
-   "rmse_ha": 83.83,
-   "bias_ha": -23.51,
-   "mae_pct_of_wetland": 13.6,
-   "pearson_r": -0.041,
-   "r2": 0.002,
-   "presence_agreement": 0.882,
-   "presence_table": {
-    "둘다_수면": 54,
-    "SAR만": 7,
-    "광학만": 1,
+    "둘다_수면": 71,
+    "SAR만": 9,
+    "광학만": 20,
     "둘다_없음": 6
    },
-   "mean_sar_ha": 48.96,
-   "mean_opt_ha": 72.47
+   "mean_sar_ha": 792.28,
+   "mean_opt_ha": 815.73
+  },
+  "1일": {
+   "n": 191,
+   "mae_ha": 146.86,
+   "rmse_ha": 354.38,
+   "bias_ha": -91.67,
+   "mae_pct_of_wetland": 11.82,
+   "pearson_r": 0.968,
+   "r2": 0.937,
+   "presence_agreement": 0.733,
+   "presence_table": {
+    "둘다_수면": 133,
+    "SAR만": 16,
+    "광학만": 35,
+    "둘다_없음": 7
+   },
+   "mean_sar_ha": 880.82,
+   "mean_opt_ha": 972.49
+  },
+  "2~3일": {
+   "n": 289,
+   "mae_ha": 175.53,
+   "rmse_ha": 459.59,
+   "bias_ha": -134.86,
+   "mae_pct_of_wetland": 13.72,
+   "pearson_r": 0.947,
+   "r2": 0.897,
+   "presence_agreement": 0.768,
+   "presence_table": {
+    "둘다_수면": 200,
+    "SAR만": 24,
+    "광학만": 43,
+    "둘다_없음": 22
+   },
+   "mean_sar_ha": 867.3,
+   "mean_opt_ha": 1002.17
   }
  },
  "sensitivity_open_only": {
   "주지표 (SAR −16dB · NDWI>0)": {
-   "n": 100,
-   "mae_ha": 71.23,
-   "rmse_ha": 91.04,
-   "bias_ha": -16.92,
-   "mae_pct_of_wetland": 16.65,
-   "pearson_r": -0.288,
-   "r2": 0.083,
-   "presence_agreement": 0.93,
+   "n": 379,
+   "mae_ha": 195.18,
+   "rmse_ha": 381.17,
+   "bias_ha": -115.88,
+   "mae_pct_of_wetland": 10.77,
+   "pearson_r": 0.966,
+   "r2": 0.932,
+   "presence_agreement": 0.926,
    "presence_table": {
-    "둘다_수면": 93,
-    "SAR만": 7,
+    "둘다_수면": 351,
+    "SAR만": 28,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 65.54,
-   "mean_opt_ha": 82.46
+   "mean_sar_ha": 1318.54,
+   "mean_opt_ha": 1434.41
   },
   "SAR 대안 (장면별 Otsu)": {
-   "n": 100,
-   "mae_ha": 60.95,
-   "rmse_ha": 73.56,
-   "bias_ha": -30.85,
-   "mae_pct_of_wetland": 14.25,
-   "pearson_r": -0.174,
-   "r2": 0.03,
-   "presence_agreement": 0.93,
+   "n": 379,
+   "mae_ha": 190.28,
+   "rmse_ha": 377.51,
+   "bias_ha": -107.32,
+   "mae_pct_of_wetland": 10.5,
+   "pearson_r": 0.966,
+   "r2": 0.933,
+   "presence_agreement": 0.926,
    "presence_table": {
-    "둘다_수면": 93,
-    "SAR만": 7,
+    "둘다_수면": 351,
+    "SAR만": 28,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 51.61,
-   "mean_opt_ha": 82.46
+   "mean_sar_ha": 1327.09,
+   "mean_opt_ha": 1434.41
   },
   "광학 대안 (NDWI>0.15)": {
-   "n": 100,
-   "mae_ha": 62.72,
-   "rmse_ha": 86.73,
-   "bias_ha": 13.82,
-   "mae_pct_of_wetland": 14.66,
-   "pearson_r": -0.186,
-   "r2": 0.035,
-   "presence_agreement": 0.77,
+   "n": 379,
+   "mae_ha": 205.95,
+   "rmse_ha": 396.81,
+   "bias_ha": -45.83,
+   "mae_pct_of_wetland": 11.37,
+   "pearson_r": 0.957,
+   "r2": 0.916,
+   "presence_agreement": 0.805,
    "presence_table": {
-    "둘다_수면": 77,
-    "SAR만": 23,
+    "둘다_수면": 305,
+    "SAR만": 74,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 65.54,
-   "mean_opt_ha": 51.72
+   "mean_sar_ha": 1318.54,
+   "mean_opt_ha": 1364.37
   }
  },
- "note": "현장 실측이 아니라 독립 센서와의 일치도입니다. 두 센서가 일치한다고 그 값이 참이라는 보장은 없습니다. 식생피복 구간은 두 센서가 모두 0 에 가까워 자동으로 일치하므로, 판정이 실제로 시험되는 곳은 개방수면 구간(by_state.open)입니다.",
+ "note": "현장 실측이 아니라 독립 센서와의 일치도입니다. 두 센서가 일치한다고 그 값이 참이라는 보장은 없습니다. 식생피복 구간은 두 센서가 모두 0 에 가까워 자동으로 일치하므로, 판정이 실제로 시험되는 곳은 개방수면 구간(by_state.open)입니다. **여러 습지를 묶은 상관(r, R²)은 읽지 마십시오.** 크기가 다른 습지를 한데 넣으면 '큰 습지는 둘 다 크다'는 자명한 사실이 높은 상관으로 나옵니다. 실제로 습지별 R² 가 0.00~0.15 인 자료에서 묶은 R² 가 0.93 으로 나왔습니다. 상관은 반드시 습지별(by_wetland)로 보십시오. 묶어서 읽어도 되는 값은 표본 수와 수면 유무 일치율입니다.",
+ "pooled_correlation_warning": "overall / by_state / by_offset 의 r·R² 는 습지 간 크기 차이에 오염됩니다. 판독 성능 지표로 인용하지 마십시오.",
  "max_offset_days": 3,
- "source": "_merged.jsonl",
+ "source": "nie_deep.jsonl",
  "by_wetland": {
-  "osm-relation-20722977": {
-   "name": null,
-   "n": 3,
-   "mae_ha": 45.77,
-   "rmse_ha": 72.92,
-   "bias_ha": 38.18,
-   "mae_pct_of_wetland": 10.44,
-   "pearson_r": -0.504,
-   "r2": 0.254,
+  "99-358164-9-001": {
+   "name": "낙동강하구",
+   "n": 127,
+   "mae_ha": 489.34,
+   "rmse_ha": 649.19,
+   "bias_ha": -280.16,
+   "mae_pct_of_wetland": 12.98,
+   "pearson_r": -0.296,
+   "r2": 0.088,
    "presence_agreement": 1.0,
    "presence_table": {
-    "둘다_수면": 3,
+    "둘다_수면": 127,
     "SAR만": 0,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 56.56,
-   "mean_opt_ha": 18.37
+   "mean_sar_ha": 2926.59,
+   "mean_opt_ha": 3206.75
   },
-  "osm-way-1052409954": {
-   "name": null,
-   "n": 1,
-   "mae_ha": 145.98,
-   "rmse_ha": 145.98,
-   "bias_ha": 145.98,
-   "mae_pct_of_wetland": 11.65,
-   "pearson_r": null,
-   "r2": null,
-   "presence_agreement": 0.0,
-   "presence_table": {
-    "둘다_수면": 0,
-    "SAR만": 1,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 153.16,
-   "mean_opt_ha": 7.18
-  },
-  "osm-way-37220944": {
-   "name": "우포늪",
+  "20-346024-5-302": {
+   "name": "영산강하구습지",
    "n": 79,
-   "mae_ha": 62.24,
-   "rmse_ha": 69.08,
-   "bias_ha": -49.06,
-   "mae_pct_of_wetland": 31.72,
-   "pearson_r": -0.026,
-   "r2": 0.001,
-   "presence_agreement": 0.962,
+   "mae_ha": 61.97,
+   "rmse_ha": 105.69,
+   "bias_ha": -58.92,
+   "mae_pct_of_wetland": 3.71,
+   "pearson_r": 0.341,
+   "r2": 0.116,
+   "presence_agreement": 1.0,
    "presence_table": {
-    "둘다_수면": 76,
-    "SAR만": 3,
+    "둘다_수면": 79,
+    "SAR만": 0,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 46.61,
-   "mean_opt_ha": 95.67
+   "mean_sar_ha": 1508.68,
+   "mean_opt_ha": 1567.6
   },
-  "osm-way-472248929": {
-   "name": null,
-   "n": 1,
-   "mae_ha": 51.64,
-   "rmse_ha": 51.64,
-   "bias_ha": 51.64,
-   "mae_pct_of_wetland": 18.65,
-   "pearson_r": null,
-   "r2": null,
-   "presence_agreement": 0.0,
+  "99-358064-9-003": {
+   "name": "우포늪",
+   "n": 82,
+   "mae_ha": 79.08,
+   "rmse_ha": 89.35,
+   "bias_ha": -48.05,
+   "mae_pct_of_wetland": 9.22,
+   "pearson_r": 0.102,
+   "r2": 0.01,
+   "presence_agreement": 0.939,
    "presence_table": {
-    "둘다_수면": 0,
-    "SAR만": 1,
+    "둘다_수면": 77,
+    "SAR만": 5,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 51.64,
-   "mean_opt_ha": 0.0
+   "mean_sar_ha": 100.24,
+   "mean_opt_ha": 148.29
   },
-  "osm-way-472248930": {
-   "name": null,
-   "n": 2,
-   "mae_ha": 72.59,
-   "rmse_ha": 91.26,
-   "bias_ha": 72.59,
-   "mae_pct_of_wetland": 16.9,
-   "pearson_r": null,
-   "r2": null,
+  "15-356104-2-027": {
+   "name": "와탄천습지",
+   "n": 28,
+   "mae_ha": 3.61,
+   "rmse_ha": 4.46,
+   "bias_ha": 1.56,
+   "mae_pct_of_wetland": 4.16,
+   "pearson_r": 0.392,
+   "r2": 0.154,
+   "presence_agreement": 0.857,
+   "presence_table": {
+    "둘다_수면": 24,
+    "SAR만": 4,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 6.84,
+   "mean_opt_ha": 5.27
+  },
+  "18-356073-9-025": {
+   "name": "고창 인천강하구",
+   "n": 18,
+   "mae_ha": 4.52,
+   "rmse_ha": 5.49,
+   "bias_ha": -2.21,
+   "mae_pct_of_wetland": 6.31,
+   "pearson_r": 0.172,
+   "r2": 0.029,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 18,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 7.63,
+   "mean_opt_ha": 9.84
+  },
+  "20-356104-5-301": {
+   "name": "와탄천하구습지",
+   "n": 12,
+   "mae_ha": 7.88,
+   "rmse_ha": 9.66,
+   "bias_ha": 7.68,
+   "mae_pct_of_wetland": 18.78,
+   "pearson_r": -0.044,
+   "r2": 0.002,
    "presence_agreement": 0.5,
    "presence_table": {
-    "둘다_수면": 1,
-    "SAR만": 1,
+    "둘다_수면": 6,
+    "SAR만": 6,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 80.22,
-   "mean_opt_ha": 7.63
+   "mean_sar_ha": 10.6,
+   "mean_opt_ha": 2.92
   },
-  "osm-way-867010167": {
-   "name": null,
-   "n": 14,
-   "mae_ha": 123.32,
-   "rmse_ha": 168.0,
-   "bias_ha": 123.32,
-   "mae_pct_of_wetland": 7.32,
-   "pearson_r": -0.31,
-   "r2": 0.096,
-   "presence_agreement": 0.929,
+  "15-377091-2-023": {
+   "name": "복정습지",
+   "n": 5,
+   "mae_ha": 1.4,
+   "rmse_ha": 1.61,
+   "bias_ha": -0.27,
+   "mae_pct_of_wetland": 3.35,
+   "pearson_r": -0.318,
+   "r2": 0.101,
+   "presence_agreement": 1.0,
    "presence_table": {
-    "둘다_수면": 13,
-    "SAR만": 1,
+    "둘다_수면": 5,
+    "SAR만": 0,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 166.94,
-   "mean_opt_ha": 43.62
+   "mean_sar_ha": 2.32,
+   "mean_opt_ha": 2.59
+  },
+  "13-377123-2-011": {
+   "name": "안창대교습지",
+   "n": 28,
+   "mae_ha": 5.84,
+   "rmse_ha": 6.79,
+   "bias_ha": 5.84,
+   "mae_pct_of_wetland": 16.32,
+   "pearson_r": -0.106,
+   "r2": 0.011,
+   "presence_agreement": 0.536,
+   "presence_table": {
+    "둘다_수면": 15,
+    "SAR만": 13,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 6.24,
+   "mean_opt_ha": 0.39
   }
- }
+ },
+ "median_wetland_r2": 0.058,
+ "n_wetlands_validated": 8
 }

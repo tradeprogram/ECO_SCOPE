@@ -108,11 +108,14 @@ function renderOverview() {
     metric(fmt(s.n_wetlands_open_water), "개소", "개방수면 성립", "water") +
     metric(fmt(s.n_wetlands_no_open_water), "개소", "지표 비적용", "mute");
 
-  const v = S.validation && S.validation.by_state && S.validation.by_state.open;
+  // 묶은 상관(by_state.open.r2)은 습지 간 크기 차이에 오염되므로 화면에 올리지 않습니다.
+  // 습지별 상관의 중앙값만 인용합니다.
+  const V = S.validation;
+  const v = V && V.by_state && V.by_state.open;
   $("metrics-valid").innerHTML = v
     ? metric(v.presence_agreement.toFixed(2), "", "수면 유무 일치율", "water") +
       metric(fmt(v.n), "건", "대조 관측") +
-      metric(v.r2.toFixed(2), "", "면적 상관 R²", "warn")
+      metric((V.median_wetland_r2 ?? 0).toFixed(2), "", "면적 상관 R² (습지별 중앙값)", "warn")
     : metric("—", "", "검증 자료 없음", "mute");
 
   const perYear = s.mean_obs_per_wetland_year;
@@ -615,26 +618,39 @@ function validationPanel() {
   const v = S.validation;
   if (!v) return "<p>검증 자료가 아직 생성되지 않았습니다.</p>";
   const o = v.by_state.open || {};
+  const byW = Object.values(v.by_wetland || {}).filter((m) => m.n).sort((a, b) => b.n - a.n);
+
   return `
 <h3>무엇과 대조했는가</h3>
 <p>현장 실측 자료가 없으므로 <b>독립 센서와의 일치도</b>로 정확도를 대신합니다.
 같은 습지·같은 시기(±${v.max_offset_days || 3}일)를 Sentinel-1 레이더와 Sentinel-2 광학이
-각각 관측한 짝을 만들어 비교하였습니다. 짝지은 관측 <b>${fmt(v.overall.n)}건</b>입니다.</p>
+각각 관측한 짝을 만들어 비교하였습니다. 습지 <b>${v.n_wetlands_validated}개소</b>,
+짝지은 관측 <b>${fmt(v.overall.n)}건</b>입니다.</p>
 
-<h3>결과</h3>
+<h3>수면 유무 판정 — 성립</h3>
 <table>
-<tr><th>구분</th><th class="n">표본</th><th class="n">수면 유무 일치율</th><th class="n">면적 상관 R²</th></tr>
+<tr><th>구분</th><th class="n">표본</th><th class="n">두 센서 판정 일치율</th></tr>
 ${Object.entries(v.by_state).map(([k, m]) =>
   `<tr><td>${STATE_LABEL[k] || k}</td><td class="n">${m.n}</td>` +
-  `<td class="n">${m.presence_agreement}</td><td class="n">${m.r2 ?? "—"}</td></tr>`).join("")}
+  `<td class="n">${m.presence_agreement}</td></tr>`).join("")}
 </table>
-<p>식생피복 구간은 두 센서가 모두 0에 가까워 자동으로 일치합니다.
-판정이 실제로 시험되는 곳은 <b>개방수면 구간</b>입니다.</p>
+<p>개방수면 구간의 일치율 <b>${o.presence_agreement}</b>가 이 시스템이 실제로 검증한 값입니다.
+식생피복 구간은 두 센서가 모두 0에 가까워 자동으로 일치하는 부분이 섞입니다.</p>
 
 <h3>면적은 검증되지 않았습니다</h3>
-<p>개방수면 구간에서 면적 상관은 <b>R² ${o.r2}</b>, 평균 절대오차 <b>${o.mae_ha} ha</b>였습니다.
-임계값을 바꾸어도 R²는 0.03~0.08에 머물러 임계 선택의 문제가 아닙니다.</p>
-<p>원인을 확인한 결과, 개방수면율의 <b>41~87%</b>가 폴리곤 평균 후방산란으로 설명됐습니다.
+<p>습지별 면적 상관은 다음과 같습니다. <b>어느 습지에서도 상관이 성립하지 않습니다.</b></p>
+<table>
+<tr><th>습지</th><th class="n">표본</th><th class="n">면적 R²</th><th class="n">MAE (ha)</th></tr>
+${byW.map((m) =>
+  `<tr><td>${m.name || "—"}</td><td class="n">${m.n}</td>` +
+  `<td class="n">${m.r2 ?? "—"}</td><td class="n">${fmt(m.mae_ha, 1)}</td></tr>`).join("")}
+</table>
+<p>습지별 R² 중앙값은 <b>${v.median_wetland_r2}</b>입니다.</p>
+<p><b>여러 습지를 묶은 상관은 읽지 마십시오.</b> 크기가 다른 습지를 한데 넣으면
+&lsquo;큰 습지는 둘 다 크다&rsquo;는 자명한 사실이 높은 상관으로 나타납니다.
+위 표의 습지별 R²가 0.00~0.15인 자료에서, 묶어서 계산하면 ${o.r2}이 됩니다.
+이 값은 판독 성능이 아닙니다.</p>
+<p>원인을 확인한 결과 개방수면율의 <b>41~87%</b>가 폴리곤 평균 후방산란으로 설명됐습니다.
 고정임계로 면적을 내면 밝기 분포가 통째로 이동할 때 임계 아래 화소 비율도 함께 움직입니다.
 산출된 면적은 수면의 공간적 범위가 아니라 <b>그 습지가 전체적으로 얼마나 물처럼 보이는가</b>의
 재진술에 가깝습니다.</p>

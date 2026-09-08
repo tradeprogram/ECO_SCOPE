@@ -66,7 +66,7 @@ def load_records(path: Path) -> list[dict]:
     return out
 
 
-def wetland_year(rec: dict) -> dict | None:
+def wetland_year(rec: dict, force_open_water: bool | None = None) -> dict | None:
     """한 습지·한 해의 지표. 관측이 모자라면 None.
 
     같은 날 두 장면이 오는 습지가 있다 — 한 궤도의 인접 프레임 경계에 걸친 경우다.
@@ -114,8 +114,14 @@ def wetland_year(rec: dict) -> dict | None:
     baseline = _percentile(ratios, 0.90)
     open_ha_max = _percentile([o["open_ha"] for o in obs], 0.90)
 
-    # 이 습지에 개방수면 지표를 쓸 수 있는가
-    has_open_water = baseline >= MIN_BASELINE_RATIO and open_ha_max >= MIN_OPEN_HA
+    # 이 습지에 개방수면 지표를 쓸 수 있는가.
+    # force_open_water 가 주어지면 그 판정을 따릅니다 — 습지 단위 판정을 위한 것입니다.
+    # 이 성질은 습지의 것이지 연도의 것이 아니므로, 연도별로 뒤집히면 안 됩니다.
+    has_open_water = (
+        force_open_water
+        if force_open_water is not None
+        else (baseline >= MIN_BASELINE_RATIO and open_ha_max >= MIN_OPEN_HA)
+    )
 
     cut = COVER_RATIO * baseline
     n_veg = n_dry = 0
@@ -178,10 +184,35 @@ def _optical(rec: dict) -> list[dict]:
 
 
 def summarize(path: Path) -> dict:
-    """전국 집계. 제안서 헤드라인 수치는 전부 여기서 나온다."""
+    """전국 집계. 헤드라인 수치는 전부 여기서 나옵니다.
+
+    **개방수면 지표 적용 여부는 습지 단위로 판정합니다.**
+    연도별로 판정하면 기준선이 문턱(5%) 근처인 습지에서 적용·비적용이 해마다 뒤집혀,
+    식생피복 비중이 0% 와 79% 를 오가는 것처럼 보입니다. 실제로 복정습지에서 그런
+    현상이 나왔습니다. 습지에 SAR 로 볼 개방수면이 있는지는 그 습지의 성질이지
+    연도의 성질이 아니므로, 전 기간을 함께 보고 한 번만 판정합니다.
+    """
     recs = load_records(path)
     years = sorted({r["year"] for r in recs})
-    per_year = [wetland_year(r) for r in recs]
+
+    # 1차: 연도별로 계산해 습지별 최대 기준선을 구합니다.
+    first_pass = [(r, wetland_year(r)) for r in recs]
+    peak: dict[str, tuple[float, float]] = {}
+    for _, y in first_pass:
+        if not y:
+            continue
+        b, a = peak.get(y["wid"], (0.0, 0.0))
+        peak[y["wid"]] = (max(b, y["open_ratio_baseline"]), max(a, y["open_ha_max"]))
+
+    open_water_wids = {
+        wid for wid, (b, a) in peak.items()
+        if b >= MIN_BASELINE_RATIO and a >= MIN_OPEN_HA
+    }
+
+    # 2차: 습지 단위 판정을 적용해 다시 계산합니다.
+    per_year = [
+        wetland_year(r, force_open_water=(r["wid"] in open_water_wids)) for r in recs
+    ]
     ok = [x for x in per_year if x]
 
     n_scene_total = sum(x["n_obs"] for x in ok)
