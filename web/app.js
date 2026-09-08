@@ -562,6 +562,7 @@ function renderShape() {
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H });
 
   if (S.layer && feat.properties.bbox5186) {
+    const requested = S.layer;
     const src = `/map/wms?layer=${encodeURIComponent(S.layer)}&bbox=${feat.properties.bbox5186}` +
                 `&width=${Math.max(Math.round(spanX * scale), 64)}&height=${Math.max(Math.round(spanY * scale), 64)}`;
     const img = el("image", {
@@ -569,7 +570,18 @@ function renderShape() {
       href: src, preserveAspectRatio: "none", opacity: 0.9,
     });
     const note = el("text", { class: "shape-note", x: 4, y: 11 }, [txt("식생도 불러오는 중…")]);
-    img.addEventListener("load", () => note.remove());
+    // 도면이 없는 구역도 서버는 200 과 투명 PNG 로 응답합니다. 그대로 두면 화면에
+    // 아무 변화가 없어 기능이 고장난 것처럼 보입니다. 실제로 그려진 화소가 있는지
+    // 확인해 '자료 없음' 과 '오류' 를 구분해 알립니다.
+    img.addEventListener("load", () => {
+      note.remove();
+      blankTile(src).then((blank) => {
+        if (!blank || S.layer !== requested) return;
+        img.remove();
+        svg.appendChild(el("text", { class: "shape-note", x: 4, y: 11 },
+          [txt("이 습지에는 해당 도면이 없습니다")]));
+      });
+    });
     img.addEventListener("error", () => {
       img.remove();
       note.textContent = "식생도를 불러오지 못했습니다";
@@ -600,6 +612,32 @@ function renderShape() {
   for (const b of document.querySelectorAll(".layer-btn")) {
     b.classList.toggle("on", (b.dataset.layer || "") === S.layer);
   }
+}
+
+/* 타일에 그려진 화소가 있는지 확인합니다. 같은 출처라 캔버스를 읽을 수 있습니다.
+   결과를 캐시해 레이어를 오갈 때 같은 타일을 다시 받지 않게 합니다. */
+const tileCache = new Map();
+
+function blankTile(src) {
+  if (tileCache.has(src)) return Promise.resolve(tileCache.get(src));
+  return fetch(src)
+    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+    .then((b) => createImageBitmap(b))
+    .then((bmp) => {
+      const c = document.createElement("canvas");
+      c.width = bmp.width; c.height = bmp.height;
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(bmp, 0, 0);
+      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      let drawn = 0;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 10) drawn++;
+      // 경계선 몇 픽셀만 걸친 경우까지 '있음' 으로 보면 화면에는 여전히 아무것도
+      // 안 보입니다. 0.5% 미만은 없는 것으로 처리합니다.
+      const blank = drawn / (c.width * c.height) < 0.005;
+      tileCache.set(src, blank);
+      return blank;
+    })
+    .catch(() => false);   // 확인에 실패하면 이미지를 지우지 않습니다.
 }
 
 /* ─────────── 위치 ─────────── */
