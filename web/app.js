@@ -121,7 +121,7 @@ function renderOverview() {
 
   const perYear = s.mean_obs_per_wetland_year;
   $("metrics-ratio").innerHTML =
-    metric(fmt(Math.round(perYear * 5)), "배", "조사 1주기(5년) 관측량") +
+    metric(fmt(Math.round(perYear * 5)), "배", "법정조사 1주기(5년) 관측량") +
     metric(fmt(perYear, 1), "회", "습지당 연 관측") +
     metric(`${first}~${String(last).slice(2)}`, "", "판독 기간");
 }
@@ -368,7 +368,7 @@ function renderCalendar() {
   svg.appendChild(el("text", {
     class: "cal-survey-label", x: LAB + plotW / 2, y: sy + 14, "text-anchor": "middle",
     stroke: "#fff", "stroke-width": 3, "paint-order": "stroke",
-  }, [txt("5년에 1회 — 이 해에 이 습지를 조사했다는 보장이 없습니다")]));
+  }, [txt("법정조사 5년 주기 — 이 해에 이 습지를 조사했다는 보장이 없습니다")]));
 
   host.appendChild(svg);
 
@@ -700,6 +700,44 @@ ${byW.map((m) =>
 }
 
 const PANELS = {
+  terms: {
+    title: "용어",
+    html: `
+<h3>법령·기관의 공식 용어</h3>
+<table>
+<tr><th>용어</th><th>근거</th></tr>
+<tr><td>내륙습지</td><td>「습지보전법」 제2조 — 육지 또는 섬에 있는 호수·못·늪·하천 또는 하구</td></tr>
+<tr><td>전국내륙습지조사</td><td>「습지보전법」 제4조에 따른 <b>5년 주기</b> 법정조사 (기초조사·정밀조사)</td></tr>
+<tr><td>습지보호지역</td><td>「습지보전법」 제8조</td></tr>
+<tr><td>하천습지·호수습지·산지습지·인공습지</td><td>국립생태원 습지 유형 분류</td></tr>
+<tr><td>생태자연도</td><td>「자연환경보전법」에 따른 등급도</td></tr>
+</table>
+
+<h3>이 판독의 조작적 용어</h3>
+<p>아래는 <b>이 시스템이 판독 결과를 설명하기 위해 정의한 용어</b>입니다.
+법령이나 국립생태원 습지 유형 분류의 공식 명칭이 아닙니다.</p>
+<table>
+<tr><th>용어</th><th>이 시스템에서의 정의</th></tr>
+<tr><td><b>개방수면</b></td><td>식생에 덮이지 않아 위성 레이더에 매끈한 면으로 관측되는 수면.
+영어 <i>open water</i>에 대응하는 표현으로, 판독 결과를 가리키기 위해 이 시스템이 사용합니다.
+VV 후방산란 −16 dB 미만이고 지형 경사 5° 이하인 화소를 말합니다.</td></tr>
+<tr><td><b>식생피복</b></td><td>개방수면이 그 습지 기준선의 30% 미만으로 줄었고, 동시에 VV 평균이
+−13 dB 를 넘은 관측. 수면 위에 산란체(수생식물)가 생긴 것으로 해석합니다.</td></tr>
+<tr><td><b>건조 의심</b></td><td>개방수면이 줄었으나 VV 평균도 함께 낮은 관측.
+수면과 산란체가 모두 확인되지 않는 상태입니다. <b>가뭄 판정이 아닙니다.</b></td></tr>
+<tr><td><b>지표 비적용</b></td><td>연중 최대 개방수면율이 5% 미만이어서 개방수면 지표를 적용하지 않은 습지.
+삼림습지·초본습지처럼 SAR 로 관측할 수면이 없는 유형입니다.</td></tr>
+<tr><td><b>개방수면 지수</b></td><td>그 습지 자신의 전 기간 최대 개방수면율을 100으로 둔 상대값.
+면적이 검증되지 않았으므로 절대값 대신 씁니다.</td></tr>
+<tr><td><b>관측 가능성</b></td><td>궤도별 연간 관측 횟수 이력. 관측이 없어서 생긴 공백을
+&lsquo;변화 없음&rsquo;으로 읽지 않기 위해 판독보다 먼저 확인합니다.</td></tr>
+</table>
+
+<h3>표기 원칙</h3>
+<p>공식 용어와 이 시스템의 조작적 용어를 섞어 쓰지 않습니다.
+판정 결과를 법령상 상태(예: 습지 훼손, 가뭄)로 옮겨 적지 않습니다.
+&lsquo;건조 의심&rsquo;은 관측 상태의 이름이지 습지의 상태를 확정한 것이 아닙니다.</p>`,
+  },
   method: {
     title: "판독 방법",
     html: `

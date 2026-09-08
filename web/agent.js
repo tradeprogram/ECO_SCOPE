@@ -171,9 +171,10 @@
     }
     if (has("현장조사", "대비", "효율", "얼마나", "빈도")) {
       const su = ev.summary;
-      return `전국 내륙습지조사는 5년 1주기로 시행되며, 특정 습지가 해당 주기 내 언제 조사되는지는 보장되지 않습니다.\n` +
+      return `전국내륙습지조사는 「습지보전법」 제4조에 따라 5년 주기로 시행되는 법정조사입니다. 전수 조사가 아니며, 특정 습지가 해당 주기 내 언제 조사되는지는 보장되지 않습니다.
+` +
         `Sentinel-1 위성은 동일 습지를 연 ${fmt(su.mean_obs_per_wetland_year, 1)}회, 평균 ${fmt(su.mean_revisit_days, 1)}일 간격으로 관측합니다.\n` +
-        `1개 조사 주기(5년) 동안 약 ${fmt(Math.round(su.mean_obs_per_wetland_year * 5))}회의 관측 자료가 축적됩니다.\n` +
+        `1개 법정조사 주기(5년) 동안 약 ${fmt(Math.round(su.mean_obs_per_wetland_year * 5))}회의 관측 자료가 축적됩니다.\n` +
         `본 판독에서는 습지 ${su.n_wetlands}개소에 대하여 관측 ${fmt(su.n_observations)}회를 실제로 처리하였습니다.`;
     }
     if (has("궤도", "orbit", "관측 가능", "공백", "끊")) {
