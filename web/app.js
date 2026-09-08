@@ -18,6 +18,7 @@ const S = {
   orbits: [],
   shapes: null,
   validation: null,
+  grades: null,
   layer: "",
   year: null,
   sort: "quality",
@@ -61,7 +62,7 @@ async function boot() {
   const get = (path, fallback) =>
     fetch(path, { cache: "no-cache" }).then((r) => r.json()).catch(() => fallback);
 
-  const [summary, years, points, korea, orbits, shapes, validation] = await Promise.all([
+  const [summary, years, points, korea, orbits, shapes, validation, grades] = await Promise.all([
     get("data/summary.json", null),
     get("data/wetland_years.json", []),
     get("data/wetland_points.json", []),
@@ -69,8 +70,9 @@ async function boot() {
     get("data/orbit_history.json", []),
     get("data/wetland_shapes.geojson", null),
     get("data/validation.json", null),
+    get("data/ecomap_grades.json", null),
   ]);
-  Object.assign(S, { summary, years, points, korea, orbits, shapes, validation });
+  Object.assign(S, { summary, years, points, korea, orbits, shapes, validation, grades });
   S.year = summary.years[summary.years.length - 1];
 
   buildYearSelect();
@@ -511,6 +513,15 @@ function renderDetail() {
   let html = '<table class="stat-table"><tbody>' +
     rows.map(([k, v, c]) => `<tr><th>${k}</th><td class="${c}">${v}</td></tr>`).join("") +
     "</tbody></table>";
+
+  const eg = S.grades && S.grades[S.sel];
+  if (eg && eg.grades) {
+    const items = Object.entries(eg.grades).slice(0, 3)
+      .map(([k, v]) => `${k} ${Math.round(v * 100)}%`).join(" · ");
+    html += `<p class="note"><b>생태자연도</b> ${items}` +
+      (eg.coverage < 0.95 ? ` <span style="color:var(--muted)">(습지의 ${Math.round(eg.coverage * 100)}%만 등급도에 포함)</span>` : "") +
+      `</p>`;
+  }
 
   if (!r.has_open_water) {
     html += '<p class="note warn">연중 최대 개방수면율이 5% 미만입니다. 삼림습지·초본습지와 같이 SAR 로 관측할 수면이 없는 유형으로 판단되어 개방수면 지표를 적용하지 않습니다.</p>';

@@ -21,6 +21,7 @@ sys.stdout.reconfigure(encoding="utf-8")   # 윈도우 콘솔 기본이 cp949 �
 
 import geopandas as gpd  # noqa: E402
 from shapely.geometry import shape  # noqa: E402
+from shapely.ops import unary_union  # noqa: E402
 
 from nie.config import INTERIM  # noqa: E402
 from nie.ecomap import client  # noqa: E402
@@ -39,16 +40,47 @@ def done_wids() -> set[str]:
     }
 
 
+def collect(bbox, depth: int = 0) -> tuple[list, bool]:
+    """bbox 안의 생태자연도 피처. 상한(500)에 닿으면 4분할해 다시 받습니다.
+
+    분할하지 않으면 밀집 지역에서 조용히 잘려, 습지 일부만 덮은 결과가
+    전체인 것처럼 집계됩니다.
+    """
+    fc = client.wfs(bbox)
+    feats = fc.get("features", [])
+    if not fc.get("_truncated") or depth >= 3:
+        return feats, bool(fc.get("_truncated"))
+    minx, miny, maxx, maxy = bbox
+    mx, my = (minx + maxx) / 2, (miny + maxy) / 2
+    # 사분면 경계에 걸친 피처는 여러 사분면에서 함께 돌아옵니다.
+    # 그대로 더하면 같은 도형의 면적을 두 번 이상 세어 피복률이 100% 를 넘습니다.
+    seen: dict[str, dict] = {}
+    trunc = False
+    for sub in ((minx, miny, mx, my), (mx, miny, maxx, my),
+                (minx, my, mx, maxy), (mx, my, maxx, maxy)):
+        sf, st = collect(sub, depth + 1)
+        for f in sf:
+            seen[str(f.get("id"))] = f
+        trunc = trunc or st
+        time.sleep(0.4)
+    return list(seen.values()), trunc
+
+
 def summarize(wid: str, name, geom_5186, pad_m: float = 200.0) -> dict:
     """습지 경계 안의 생태자연도 등급별 면적 점유율."""
     minx, miny, maxx, maxy = geom_5186.bounds
-    fc = client.wfs((minx - pad_m, miny - pad_m, maxx + pad_m, maxy + pad_m))
-    feats = fc.get("features", [])
+    feats, truncated = collect((minx - pad_m, miny - pad_m, maxx + pad_m, maxy + pad_m))
+    feats = list({str(f.get("id")): f for f in feats}.values())
+    fc = {"_truncated": truncated}
     if not feats:
         return {"wid": wid, "name": name, "status": "no_data", "grades": {}}
 
     total = geom_5186.area
-    grades: dict[str, float] = {}
+    # 생태자연도 폴리곤은 서로 겹칩니다. 별도관리지역은 국립공원·야생생물보호구역·
+    # 습지보호지역이 같은 자리에 중첩 지정되기도 합니다. 면적을 그냥 더하면
+    # 점유율이 100% 를 넘습니다(실측에서 278% 까지 나왔습니다).
+    # 등급별로 **합집합**을 낸 뒤 습지와 교차시켜야 합니다.
+    by_grade: dict[str, list] = {}
     smld_titles: set[str] = set()
     plant_titles: dict[str, float] = {}
 
@@ -63,15 +95,29 @@ def summarize(wid: str, name, geom_5186, pad_m: float = 200.0) -> dict:
         if part.is_empty or part.area <= 0:
             continue
         props = f.get("properties", {})
-        grades[client.grade_of(props)] = grades.get(client.grade_of(props), 0.0) + part.area
+        by_grade.setdefault(client.grade_of(props), []).append(part)
         if props.get("precise_smld_ttle"):
             smld_titles.add(str(props["precise_smld_ttle"]))
         if props.get("plnt_cln_ttle"):
             key = str(props["plnt_cln_ttle"])
             plant_titles[key] = plant_titles.get(key, 0.0) + part.area
 
-    covered = sum(grades.values())
+    grades: dict[str, float] = {}
+    for label, parts in by_grade.items():
+        merged = unary_union(parts)
+        if not merged.is_empty:
+            grades[label] = merged.area
+    grades = dict(sorted(grades.items(), key=lambda kv: -kv[1]))
+
+    # 등급 간에도 겹칠 수 있으므로 전체 피복은 모든 등급의 합집합으로 따로 냅니다.
+    all_parts = [g for parts in by_grade.values() for g in parts]
+    covered_geom = unary_union(all_parts) if all_parts else None
+
+    covered = covered_geom.area if covered_geom is not None else 0.0
+    over = covered / total if total else 0
     return {
+        "coverage_warning": "피복률이 1을 넘습니다. 계산을 확인하십시오." if over > 1.02 else None,
+        "note": "등급 폴리곤은 서로 겹칠 수 있어 등급별 점유율의 합은 피복률과 다를 수 있습니다.",
         "wid": wid,
         "name": name,
         "status": "ok",

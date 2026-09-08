@@ -134,6 +134,26 @@ def build(sources: list[str]) -> None:
         )
         print(f"관측 가능성 이력 {len(orbits)}개소")
 
+    # 3.6) 생태자연도 등급 구성 — 습지 판독 결과를 기관 등급도와 잇습니다.
+    grades_path = INTERIM / "ecomap_grades.jsonl"
+    if grades_path.exists():
+        rows = [json.loads(l) for l in grades_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        keep = {}
+        for r in rows:
+            if r.get("status") != "ok" or not r.get("grades"):
+                continue
+            # 등급 폴리곤이 서로 겹치므로 점유율의 합이 피복률과 다를 수 있습니다.
+            keep[r["wid"]] = {
+                "name": r.get("name"),
+                "coverage": r.get("coverage"),
+                "grades": r["grades"],
+                "wetland_titles": r.get("wetland_titles") or [],
+            }
+        if keep:
+            (WEB_DATA / "ecomap_grades.json").write_text(
+                json.dumps(keep, ensure_ascii=False), encoding="utf-8")
+            print(f"생태자연도 등급 {len(keep)}개소")
+
     # 미니 지도용 국토 외곽선.
     # GEE 는 시도에 따라 Polygon / MultiPolygon / GeometryCollection 을 섞어 준다.
     # 화면에서 분기하지 않도록 여기서 Polygon 하나로 펴서 내보낸다.
