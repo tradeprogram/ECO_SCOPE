@@ -516,11 +516,17 @@ function renderDetail() {
 
   const eg = S.grades && S.grades[S.sel];
   if (eg && eg.grades) {
-    const items = Object.entries(eg.grades).slice(0, 3)
+    // 0% 로 반올림되는 등급까지 늘어놓으면 읽는 사람이 얻는 것이 없습니다.
+    const items = Object.entries(eg.grades)
+      .filter(([, v]) => v >= 0.005).slice(0, 3)
       .map(([k, v]) => `${k} ${Math.round(v * 100)}%`).join(" · ");
-    html += `<p class="note"><b>생태자연도</b> ${items}` +
-      (eg.coverage < 0.95 ? ` <span style="color:var(--muted)">(습지의 ${Math.round(eg.coverage * 100)}%만 등급도에 포함)</span>` : "") +
-      `</p>`;
+    if (items) {
+      html += `<p class="note"><b>생태자연도</b> ${items}` +
+        (eg.coverage < 0.95
+          ? ` <span class="dim">(습지의 ${Math.round(eg.coverage * 100)}%만 등급도에 포함)</span>`
+          : "") +
+        `</p>`;
+    }
   }
 
   if (!r.has_open_water) {

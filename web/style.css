@@ -354,3 +354,5 @@ table{border-collapse:collapse}
   .agent-launcher{right:14px;bottom:14px}
   .agent-panel{right:14px;left:14px;width:auto;bottom:66px}
 }
+
+.dim { color: var(--muted); }
