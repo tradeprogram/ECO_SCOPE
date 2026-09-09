@@ -37,11 +37,11 @@ const COLOR = {
 
 const STATE_LABEL = {
   open: "개방수면",
-  // 소실의 원인(식생/건조)은 SAR 단독으로 가르지 못한다는 것을 확인했습니다.
+  // 감소의 원인(식생/건조)은 SAR 단독으로 가르지 못한다는 것을 확인했습니다.
   // 화면은 '사라졌다'까지만 말하고, 추정 구분은 괄호로 덧붙입니다.
-  veg_covered: "개방수면 소실 (식생 추정)",
-  dry_suspect: "개방수면 소실 (산란체 없음)",
-  no_open_water: "지표 비적용",
+  veg_covered: "개방수면 감소 (후방산란 증가형)",
+  dry_suspect: "개방수면 감소 (후방산란 감소형)",
+  no_open_water: "개방수면 미발달",
 };
 
 const fmt = (n, d = 0) =>
@@ -110,8 +110,8 @@ function renderOverview() {
 
   $("metrics-target").innerHTML =
     metric(fmt(s.n_wetlands_open_water), "개소", "개방수면 성립", "water") +
-    metric(fmt(s.n_wetlands_with_cover_loss), "개소", "개방수면 소실 관측", "veg") +
-    metric(fmt(s.n_wetlands_no_open_water), "개소", "지표 비적용", "mute");
+    metric(fmt(s.n_wetlands_with_cover_loss), "개소", "개방수면 감소 관측", "veg") +
+    metric(fmt(s.n_wetlands_no_open_water), "개소", "개방수면 미발달", "mute");
 
   // 묶은 상관(by_state.open.r2)은 습지 간 크기 차이에 오염되므로 화면에 올리지 않습니다.
   // 습지별 상관의 중앙값만 인용합니다.
@@ -149,7 +149,7 @@ function rowsForYear() {
     const q = S.search.toLowerCase();
     rows = rows.filter((r) => labelOf(r).toLowerCase().includes(q));
   }
-  // 고신뢰 우선, 같은 등급 안에서는 개방수면 소실 비중이 큰 순.
+  // 고신뢰 우선, 같은 등급 안에서는 개방수면 감소 관측 비중이 큰 순.
   // 첫 화면에 판정 결과가 다양하게 보여야 달력이 무엇을 말하는지 읽힙니다.
   const quality = (r) =>
     (r.confidence === "high" && r.has_open_water ? 0 : 1) * 1e6 -
@@ -173,8 +173,8 @@ function renderList() {
   const total = S.years.filter((r) => r.year === S.year).length;
   // 우측 수치가 무엇인지 한 번만 밝혀 둡니다. 열 제목을 따로 두면 목록이 무거워집니다.
   $("rail-count").textContent = S.search
-    ? `검색 ${rows.length}개소 · 우측은 개방수면 소실 비중`
-    : `${rows.length} / ${total}개소 · ${S.year}년 · 우측은 개방수면 소실 비중`;
+    ? `검색 ${rows.length}개소 · 우측은 개방수면 감소 관측 비중`
+    : `${rows.length} / ${total}개소 · ${S.year}년 · 우측은 개방수면 감소 관측 비중`;
 
   const ul = $("wetland-list");
   ul.innerHTML = "";
@@ -286,9 +286,9 @@ function mix(a, b, t) {
 function renderCalendar() {
   $("legend").innerHTML = [
     [COLOR.water, "개방수면"],
-    [COLOR.veg, "소실 (식생 추정)"],
-    [COLOR.dry, "소실 (산란체 없음)"],
-    [COLOR.none, "지표 비적용"],
+    [COLOR.veg, "감소 (후방산란 증가형)"],
+    [COLOR.dry, "감소 (후방산란 감소형)"],
+    [COLOR.none, "개방수면 미발달"],
   ].map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join("");
 
   const all = rowsForYear();
@@ -297,11 +297,11 @@ function renderCalendar() {
   host.innerHTML = "";
   if (!rows.length) { $("calendar-meta").textContent = ""; $("calendar-foot").textContent = ""; return; }
 
-  // 좌: 습지명 / 중앙: 1년 관측 스트립 / 우: 개방수면 소실 비중
+  // 좌: 습지명 / 중앙: 1년 관측 스트립 / 우: 개방수면 감소 관측 비중
   //   비중을 오른쪽에 함께 두면 각 행이 무엇을 뜻하는지 바로 읽힙니다.
   const LAB = 148, PCT = 56, RH = 18, TOP = 34, SURVEY = 40;
   // 행이 많으면 세로 스크롤바가 생기면서 폭이 줄어듭니다. 그 폭을 미리 빼지 않으면
-  // 가로로 넘쳐 오른쪽 소실 비중 열이 잘립니다.
+  // 가로로 넘쳐 오른쪽 감소 관측 비중 열이 잘립니다.
   const willScroll = TOP + rows.length * RH + SURVEY > 420;
   const W = Math.max(700, host.parentElement.clientWidth - (willScroll ? 20 : 4));
   const plotW = W - LAB - PCT;
@@ -328,7 +328,7 @@ function renderCalendar() {
   svg.appendChild(el("text", { class: "cal-axis", x: LAB - 8, y: TOP - 10, "text-anchor": "end" },
     [txt(`${S.year}년 · 월`)]));
   svg.appendChild(el("text", { class: "cal-axis", x: W - 4, y: TOP - 10, "text-anchor": "end" },
-    [txt("소실")]));
+    [txt("감소")]));
 
   rows.forEach((r, i) => {
     const y = TOP + i * RH;
@@ -355,7 +355,7 @@ function renderCalendar() {
       svg.appendChild(rect);
     }
 
-    // 행 끝에 개방수면 소실 비중 — 이 줄이 무엇을 말하는지 숫자로 못박습니다.
+    // 행 끝에 개방수면 감소 관측 비중 — 이 줄이 무엇을 말하는지 숫자로 못박습니다.
     const share = r.covered_share;
     svg.appendChild(el("text", {
       class: "cal-pct", x: W - 4, y: y + 12, "text-anchor": "end",
@@ -390,7 +390,7 @@ function cellTip(r, o) {
   const peak = peakRatio(r.wid);
   const idx = peak > 0 ? Math.round((o.open_ratio / peak) * 100) : 0;
   return `<b>${labelOf(r)}</b><br>${o.date} · ${STATE_LABEL[o.state]}<br>` +
-    `개방수면 지수 <b>${idx}</b> / 100<br>VV 평균 <b>${fmt(o.vv_db, 1)} dB</b>` +
+    `정규화 개방수면율 <b>${idx}</b> / 100<br>VV 평균 <b>${fmt(o.vv_db, 1)} dB</b>` +
     (o.frames > 1 ? `<br><span style="opacity:.75">동일 일자 ${o.frames}장면 평균</span>` : "");
 }
 
@@ -403,7 +403,7 @@ function renderTimeseries() {
   host.innerHTML = "";
   const all = S.years.filter((r) => r.wid === S.sel).sort((a, b) => a.year - b.year);
   if (!all.length) {
-    $("ts-title").textContent = "개방수면 지수";
+    $("ts-title").textContent = "정규화 개방수면율";
     $("ts-meta").textContent = "";
     $("ts-foot").textContent = "";
     host.innerHTML = '<p style="color:var(--muted);font-size:12px;padding:32px 0;text-align:center;margin:0">습지를 선택하십시오.</p>';
@@ -412,7 +412,7 @@ function renderTimeseries() {
 
   const r0 = all[0];
   const peak = peakRatio(S.sel) || 1;
-  $("ts-title").textContent = `${labelOf(r0)} — 개방수면 지수`;
+  $("ts-title").textContent = `${labelOf(r0)} — 정규화 개방수면율`;
   $("ts-meta").innerHTML =
     `습지면적 ${fmt(r0.area_ha)} ha · orbit ${r0.rel_orbit} ${r0.orbit_pass === "ASCENDING" ? "상행" : "하행"}<br>` +
     `${all[0].year}~${all[all.length - 1].year}년`;
@@ -466,7 +466,7 @@ function renderTimeseries() {
   for (const o of obs) {
     const c = el("circle", { class: "pt", cx: X(o.date), cy: Y(idxOf(o)), r: 2.6, fill: cellColor(o, o.baseline) });
     c.onmouseenter = (e) => showTip(e,
-      `${o.date} · ${STATE_LABEL[o.state]}<br>개방수면 지수 <b>${Math.round(idxOf(o))}</b> / 100<br>VV <b>${fmt(o.vv_db, 1)} dB</b>`);
+      `${o.date} · ${STATE_LABEL[o.state]}<br>정규화 개방수면율 <b>${Math.round(idxOf(o))}</b> / 100<br>VV <b>${fmt(o.vv_db, 1)} dB</b>`);
     c.onmousemove = moveTip;
     c.onmouseleave = hideTip;
     svg.appendChild(c);
@@ -485,7 +485,7 @@ function renderTimeseries() {
   const nCov = all.reduce((a, r) => a + (r.n_covered ?? 0), 0);
   const nObs = all.reduce((a, r) => a + r.n_obs, 0);
   $("ts-foot").textContent =
-    `관측 ${nObs}회 중 개방수면 소실 ${nCov}회. 면적 절대값은 검증되지 않아 지수로 표시합니다.` +
+    `관측 ${nObs}회 중 개방수면 감소 ${nCov}회. 면적 절대값은 검증되지 않아 지수로 표시합니다.` +
     (optical.length ? ` Sentinel-2 ${optical.length}장면으로 교차검증하였습니다.` : "");
 }
 
@@ -508,8 +508,8 @@ function renderDetail() {
     ["관측 횟수", `${r.n_obs}회`, ""],
     ["평균 재방문", `${fmt(r.revisit_days, 1)}일`, ""],
     ["개방수면 관측", r.has_open_water ? pct(openShare) : "—", "water"],
-    ["개방수면 소실", r.has_open_water ? pct(r.covered_share) : "—", "veg"],
-    ["판독 신뢰도", r.has_open_water ? (r.confidence === "high" ? "고" : "저") : "지표 비적용", ""],
+    ["개방수면 감소", r.has_open_water ? pct(r.covered_share) : "—", "veg"],
+    ["판독 신뢰도", r.has_open_water ? (r.confidence === "high" ? "고" : "저") : "개방수면 미발달", ""],
   ];
 
   let html = '<table class="stat-table"><tbody>' +
@@ -794,31 +794,36 @@ const PANELS = {
 <tr><td>생태자연도</td><td>「자연환경보전법」에 따른 등급도</td></tr>
 </table>
 
-<h3>이 판독의 조작적 용어</h3>
-<p>아래는 <b>이 시스템이 판독 결과를 설명하기 위해 정의한 용어</b>입니다.
-법령이나 국립생태원 습지 유형 분류의 공식 명칭이 아닙니다.</p>
+<h3>학술 용어</h3>
 <table>
-<tr><th>용어</th><th>이 시스템에서의 정의</th></tr>
-<tr><td><b>개방수면</b></td><td>식생에 덮이지 않아 위성 레이더에 매끈한 면으로 관측되는 수면.
-영어 <i>open water</i>에 대응하는 표현으로, 판독 결과를 가리키기 위해 이 시스템이 사용합니다.
+<tr><th>용어</th><th>이 판독에서의 정의와 근거</th></tr>
+<tr><td><b>수체</b> (水體)</td><td>레이더가 탐지하는 물의 영역. 대한원격탐사학회지의
+표준 용어이며(&lsquo;수체 탐지&rsquo;), 본 판독의 탐지 단위입니다.
 VV 후방산란 −16 dB 미만이고 지형 경사 5° 이하인 화소를 말합니다.</td></tr>
-<tr><td><b>개방수면 소실</b></td><td>개방수면이 그 습지 기준선의 30% 미만으로 줄어든 관측.
+<tr><td><b>개방수면</b> (open water)</td><td>정수식생에 덮이지 않아 노출된 수면.
+습지생태 분야의 학술 용어입니다(한국환경생태학회지 논문 주제어). 습지 폴리곤 안에서
+탐지된 수체가 곧 개방수면입니다. 다만 국립생태원 <b>습지 유형 분류의 공식 명칭은
+아닙니다</b> — 유형 분류는 하천형·호수형·산지형과 그 하위 구분(하도습지·배후습지 등)입니다.</td></tr>
+<tr><td><b>개방수면 감소</b></td><td>개방수면이 그 습지 기준선의 30% 미만으로 줄어든 관측.
 <b>이 시스템이 측정한 것은 여기까지입니다.</b> 줄어든 원인은 이 판정에 포함되지 않습니다.</td></tr>
-<tr><td><b>식생 추정 / 산란체 없음</b></td><td>소실 관측을 VV 평균 −13 dB 로 다시 나눈
+<tr><td><b>후방산란 증가형 / 후방산란 감소형</b></td><td>개방수면 감소 관측을 VV 평균 −13 dB 로 다시 나눈
 <b>실험적 구분</b>입니다. 광학과 대조한 결과 특이도가 0.10 에 그쳐 개별 관측의 판정
 근거로는 쓰지 않습니다(판독 한계 참조). 화면에서는 참고 표시로만 남깁니다.</td></tr>
-<tr><td><b>지표 비적용</b></td><td>연중 최대 개방수면율이 5% 미만이어서 개방수면 지표를 적용하지 않은 습지.
+<tr><td><b>개방수면 미발달</b></td><td>연중 최대 개방수면율이 5% 미만이어서 개방수면 지표를 적용하지 않은 습지.
 삼림습지·초본습지처럼 SAR 로 관측할 수면이 없는 유형입니다.</td></tr>
-<tr><td><b>개방수면 지수</b></td><td>그 습지 자신의 전 기간 최대 개방수면율을 100으로 둔 상대값.
-면적이 검증되지 않았으므로 절대값 대신 씁니다.</td></tr>
+<tr><td><b>정규화 개방수면율</b></td><td>그 습지 자신의 전 기간 최대 개방수면율을 100으로 둔 상대값.
+면적 절대값이 검증되지 않았으므로 대신 씁니다.</td></tr>
 <tr><td><b>관측 가능성</b></td><td>궤도별 연간 관측 횟수 이력. 관측이 없어서 생긴 공백을
 &lsquo;변화 없음&rsquo;으로 읽지 않기 위해 판독보다 먼저 확인합니다.</td></tr>
+<tr><td colspan="2" class="note">위 용어 중 <b>개방수면 감소</b>·<b>후방산란 증가형/감소형</b>·
+<b>개방수면 미발달</b>·<b>정규화 개방수면율</b>은 판독 결과를 설명하기 위해 이 시스템이
+정의한 조작적 정의입니다. 수체·개방수면·정수식생·후방산란은 학술 용어입니다.</td></tr>
 </table>
 
 <h3>표기 원칙</h3>
 <p>공식 용어와 이 시스템의 조작적 용어를 섞어 쓰지 않습니다.
 판정 결과를 법령상 상태(예: 습지 훼손, 가뭄)로 옮겨 적지 않습니다.
-&lsquo;건조 의심&rsquo;은 관측 상태의 이름이지 습지의 상태를 확정한 것이 아닙니다.</p>`,
+&lsquo;개방수면 감소&rsquo;는 관측 상태의 이름이지 습지의 상태를 확정한 것이 아닙니다.</p>`,
   },
   method: {
     title: "판독 방법",
@@ -845,9 +850,9 @@ Sentinel-2 NDVI 와 대조한 결과 <b>이 판정은 성립하지 않았습니�
 −12.8/−11.2/−9.9, 비식생 −13.7/−10.7/−9.7 dB) 어느 지점에서 잘라도 판별력
 (Youden J 0.085)이 이 수준입니다. VV 와 녹색도의 상관도 전 기간 +0.14, 생장기 −0.13 으로
 부호가 뒤집힙니다. 그래서 화면은 &lsquo;개방수면이 사라졌다&rsquo;까지만 말합니다.</p>
-<p>다만 계절은 원인을 예측합니다. 생장기(5~9월) 소실 관측의 광학 구성은
+<p>다만 계절은 원인을 예측합니다. 생장기(5~9월) 감소 관측의 광학 구성은
 식생 55% · 비식생 15%, 비생장기에는 14% · 28% 로 뒤집힙니다. 개별 관측이 아니라
-<b>집계 수준에서는</b> &lsquo;여름철 소실은 대개 식생&rsquo;이라고 말할 수 있습니다.</p>
+<b>집계 수준에서는</b> &lsquo;여름철 감소는 대개 식생&rsquo;이라고 말할 수 있습니다.</p>
 
 <h3>관측 가능성을 판독보다 먼저 봅니다</h3>
 <p>Sentinel-1B 는 2021년 12월 소실되었고 Sentinel-1C 는 2024년 12월 발사되었습니다.
@@ -902,12 +907,12 @@ Sentinel-2 NDVI 와 대조한 결과 <b>이 판정은 성립하지 않았습니�
 <p>식생피복 판정의 VV 임계 −13 dB 는 시범 습지 1개소에서 나온 값이었습니다.
 전국 자료(습지 17개소·짝지음 173건)로 검사한 결과 최적값은 −13.0 dB 로 같았으나,
 판별력이 없었습니다(Youden J 0.085, 특이도 0.10). 식생이 없는 관측의 90%도
-&lsquo;식생피복&rsquo;으로 분류되며, 실제 소실 관측의 93.8%가 그렇게 분류되어
+&lsquo;식생피복&rsquo;으로 분류되며, 실제 감소 관측의 93.8%가 그렇게 분류되어
 사실상 상수 분류기입니다.
-주지표를 <b>개방수면 소실 비중</b>으로 바꾸고, 원인 구분은 실험 항목으로 내렸습니다.</p>
+주지표를 <b>개방수면 감소 관측 비중</b>으로 바꾸고, 원인 구분은 실험 항목으로 내렸습니다.</p>
 
 <h3>남은 것</h3>
-<p>소실의 원인을 실제로 가르려면 편파비(VH/VV)나 간섭 결맞음처럼 구조를 보는 지표가
+<p>감소의 원인을 실제로 가르려면 편파비(VH/VV)나 간섭 결맞음처럼 구조를 보는 지표가
 필요합니다. 이 시스템은 아직 그것을 쓰지 않습니다.</p>`,
   },
 };

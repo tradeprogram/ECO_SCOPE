@@ -14,8 +14,8 @@ Otsu 는 **민감도 검사**로만 남긴다. 둘이 크게 갈리는 습지-�
     baseline        그 습지·그 해 open_ratio 의 90퍼센타일 (최대 개방 상태)
     covered         open_ratio < COVER_RATIO x baseline  (개방수면이 사라진 관측)
     covered_share   covered 관측 비중 — **주지표**
-    veg_covered     covered 이면서 VV 평균 > VV_VEG_DB   (식생 추정, 실험적)
-    dry_suspect     covered 이면서 VV 평균 <= VV_VEG_DB  (산란체 없음 추정, 실험적)
+    veg_covered     covered 이면서 VV 평균 > VV_VEG_DB   (후방산란 증가형, 실험적)
+    dry_suspect     covered 이면서 VV 평균 <= VV_VEG_DB  (후방산란 감소형 추정, 실험적)
 
 VV_VEG_DB = -13 은 파일럿(우포늪 2024)에서 왔다. 개방수면 관측의 VV 평균은
 -16~-22 dB, 식생피복 관측은 -8.8~-12 dB 로 갈렸고 그 사이가 비어 있었다.
@@ -39,7 +39,7 @@ VV_VEG_DB = -13 은 파일럿(우포늪 2024)에서 왔다. 개방수면 관측�
 
     다만 원인을 아주 모르는 것은 아니다. 계절이 VV 보다 잘 예측한다 —
     생장기(5~9월) covered 관측의 광학 구성은 식생 55% / 비식생 15%, 비생장기는
-    14% / 28% 로 뒤집힌다. 집계 수준에서는 '여름철 소실은 대개 식생'이라고 말할 수 있다.
+    14% / 28% 로 뒤집힌다. 집계 수준에서는 '여름철 감소는 대개 식생'이라고 말할 수 있다.
 """
 
 from __future__ import annotations

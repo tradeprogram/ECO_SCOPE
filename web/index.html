@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="style.css?v=20260909145308">
+<link rel="stylesheet" href="style.css?v=20260909172131">
 </head>
 <body>
 
@@ -63,7 +63,7 @@
         <span>정렬 기준</span>
         <select id="sort-select">
           <option value="quality">판독 신뢰도</option>
-          <option value="veg">개방수면 소실 비중</option>
+          <option value="veg">개방수면 감소 관측 비중</option>
           <option value="obs">관측 횟수</option>
           <option value="area">습지 면적</option>
         </select>
@@ -93,7 +93,7 @@
     <div class="row">
       <section class="card grow">
         <div class="card-head">
-          <h2 id="ts-title">개방수면 지수</h2>
+          <h2 id="ts-title">정규화 개방수면율</h2>
           <span class="meta" id="ts-meta"></span>
         </div>
         <div id="timeseries"></div>
@@ -164,7 +164,7 @@
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js?v=20260909145308"></script>
-<script src="agent.js?v=20260909145308"></script>
+<script src="app.js?v=20260909172131"></script>
+<script src="agent.js?v=20260909172131"></script>
 </body>
 </html>
