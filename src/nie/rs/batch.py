@@ -56,6 +56,35 @@ class Checkpoint:
         self.done.add((rec["wid"], rec["year"]))
 
 
+# 이 넓이를 넘으면 1년 요청이 GEE 동시성 한도에 걸립니다.
+# 실측: 한강하구(5,817 ha) 1년 실패 / 3개월 24초 성공.
+BIG_AREA_HA = 1000.0
+
+
+def _year_in_chunks(geom, year: int, rel_orbit: int, n: int,
+                    with_optical: bool) -> tuple[list, list]:
+    """1년치를 n등분해 나눠 받습니다.
+
+    대면적 습지(한강하구 5,817 ha 등)에서 1년을 한 번에 요청하면 GEE 가
+    'Too many concurrent aggregations' 로 거절합니다. 장면마다 Otsu 히스토그램을
+    함께 내기 때문에 폴리곤이 크고 장면이 많을수록 한 요청의 부담이 커집니다.
+    같은 요청을 기간으로 쪼개면 통과합니다 — 실측에서 1년은 실패, 3개월은 24초에
+    7장면을 받았습니다. 결과는 이어 붙이면 되므로 산출물은 동일합니다.
+    """
+    months = [1 + (12 * i) // n for i in range(n)] + [13]
+    scenes, optical = [], []
+    for a, b in zip(months, months[1:]):
+        lo = f"{year}-{a:02d}-01"
+        hi = f"{year + 1}-01-01" if b == 13 else f"{year}-{b:02d}-01"
+        start, end = gee.kst_window(lo, hi)
+        scenes.extend(s1_water.wetland_timeseries_dual(
+            geom, start, end, rel_orbit=rel_orbit))
+        if with_optical:
+            optical.extend(s2_veg.wetland_timeseries(geom, start, end))
+        time.sleep(2)
+    return scenes, optical
+
+
 def run(
     wetlands,
     years: list[int],
@@ -113,8 +142,20 @@ def run(
                 "orbit_pass": orbit["pass"],
                 "status": "ok",
             }
+            # 대면적 습지는 1년을 한 번에 요청하면 거의 확실히 거절당합니다.
+            # 실패를 기다렸다 쪼개면 개소당 3분 남짓을 버리므로, 처음부터 쪼갭니다.
+            presplit = 4 if float(row.area_ha) >= BIG_AREA_HA else 0
+
             for attempt in range(1, max_retry + 1):
                 try:
+                    if presplit:
+                        sc, op = _year_in_chunks(
+                            geom, year, orbit["rel_orbit"], presplit, with_optical)
+                        rec["scenes"] = sc
+                        rec["split_requests"] = presplit
+                        if with_optical:
+                            rec["optical"] = op
+                        break
                     rec["scenes"] = s1_water.wetland_timeseries_dual(
                         geom, start, end, rel_orbit=orbit["rel_orbit"]
                     )
@@ -123,10 +164,30 @@ def run(
                     break
                 except Exception as exc:
                     msg = str(exc)[:160]
+                    # 동시성·할당량 오류는 기다린다고 풀리지 않았습니다. 요청 자체가
+                    # 무거운 것이므로, 재시도할 때마다 기간을 더 잘게 쪼개 부담을 줄입니다.
+                    heavy = any(
+                        k in msg
+                        for k in ("Too many concurrent", "quota", "Quota",
+                                  "rate limit", "Rate limit", "Computation timed out")
+                    )
                     if attempt == max_retry:
                         rec["status"] = "error"
                         rec["error"] = msg
                         rec["scenes"] = []
+                    elif heavy:
+                        parts = max(presplit, 4) * (attempt + 1)   # 8분할 -> 12분할 -> ...
+                        try:
+                            sc, op = _year_in_chunks(
+                                geom, year, orbit["rel_orbit"], parts, with_optical)
+                            rec["scenes"] = sc
+                            if with_optical:
+                                rec["optical"] = op
+                            rec["split_requests"] = parts
+                            break
+                        except Exception as exc2:
+                            msg = str(exc2)[:160]
+                            time.sleep(20 * attempt)
                     else:
                         time.sleep(4 * attempt)
             ckpt.write(rec)

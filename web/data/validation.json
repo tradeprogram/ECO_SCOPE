@@ -1,188 +1,188 @@
 {
  "overall": {
-  "n": 1075,
-  "mae_ha": 93.49,
-  "rmse_ha": 298.62,
-  "bias_ha": -53.51,
-  "mae_pct_of_wetland": 10.57,
+  "n": 1035,
+  "mae_ha": 106.82,
+  "rmse_ha": 311.64,
+  "bias_ha": -63.35,
+  "mae_pct_of_wetland": 9.93,
   "pearson_r": 0.961,
-  "r2": 0.924,
-  "presence_agreement": 0.969,
+  "r2": 0.923,
+  "presence_agreement": 0.971,
   "presence_table": {
-   "둘다_수면": 1035,
-   "SAR만": 33,
+   "둘다_수면": 998,
+   "SAR만": 30,
    "광학만": 0,
    "둘다_없음": 7
   },
-  "mean_sar_ha": 571.37,
-  "mean_opt_ha": 624.87
+  "mean_sar_ha": 729.56,
+  "mean_opt_ha": 792.91
  },
  "by_state": {
   "open": {
-   "n": 1022,
-   "mae_ha": 83.95,
-   "rmse_ha": 234.6,
-   "bias_ha": -42.29,
-   "mae_pct_of_wetland": 9.34,
-   "pearson_r": 0.977,
-   "r2": 0.955,
-   "presence_agreement": 0.974,
+   "n": 996,
+   "mae_ha": 96.41,
+   "rmse_ha": 247.29,
+   "bias_ha": -51.64,
+   "mae_pct_of_wetland": 8.86,
+   "pearson_r": 0.976,
+   "r2": 0.952,
+   "presence_agreement": 0.976,
    "presence_table": {
-    "둘다_수면": 995,
-    "SAR만": 27,
+    "둘다_수면": 972,
+    "SAR만": 24,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 597.42,
-   "mean_opt_ha": 639.71
+   "mean_sar_ha": 754.55,
+   "mean_opt_ha": 806.18
   },
   "veg_covered": {
-   "n": 46,
-   "mae_ha": 80.95,
-   "rmse_ha": 461.63,
-   "bias_ha": -73.09,
-   "mae_pct_of_wetland": 22.56,
-   "pearson_r": 0.952,
-   "r2": 0.907,
-   "presence_agreement": 0.87,
+   "n": 33,
+   "mae_ha": 109.11,
+   "rmse_ha": 544.98,
+   "bias_ha": -98.15,
+   "mae_pct_of_wetland": 25.37,
+   "pearson_r": 0.959,
+   "r2": 0.919,
+   "presence_agreement": 0.818,
    "presence_table": {
-    "둘다_수면": 33,
+    "둘다_수면": 20,
     "SAR만": 6,
     "광학만": 0,
     "둘다_없음": 7
    },
-   "mean_sar_ha": 19.24,
-   "mean_opt_ha": 92.33
+   "mean_sar_ha": 24.71,
+   "mean_opt_ha": 122.87
   },
   "dry_suspect": {
-   "n": 7,
-   "mae_ha": 1569.29,
-   "rmse_ha": 2063.68,
-   "bias_ha": -1563.13,
-   "mae_pct_of_wetland": 69.81,
-   "pearson_r": 0.875,
-   "r2": 0.766,
+   "n": 6,
+   "mae_ha": 1822.86,
+   "rmse_ha": 2228.94,
+   "bias_ha": -1815.67,
+   "mae_pct_of_wetland": 70.2,
+   "pearson_r": 0.844,
+   "r2": 0.712,
    "presence_agreement": 1.0,
    "presence_table": {
-    "둘다_수면": 7,
+    "둘다_수면": 6,
     "SAR만": 0,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 395.24,
-   "mean_opt_ha": 1958.37
+   "mean_sar_ha": 459.43,
+   "mean_opt_ha": 2275.1
   }
  },
  "by_offset": {
   "0일": {
-   "n": 301,
-   "mae_ha": 48.2,
-   "rmse_ha": 184.58,
-   "bias_ha": -9.7,
-   "mae_pct_of_wetland": 7.56,
-   "pearson_r": 0.972,
-   "r2": 0.945,
+   "n": 294,
+   "mae_ha": 60.82,
+   "rmse_ha": 193.46,
+   "bias_ha": -22.2,
+   "mae_pct_of_wetland": 7.07,
+   "pearson_r": 0.976,
+   "r2": 0.952,
    "presence_agreement": 0.973,
    "presence_table": {
-    "둘다_수면": 290,
+    "둘다_수면": 283,
     "SAR만": 8,
     "광학만": 0,
     "둘다_없음": 3
    },
-   "mean_sar_ha": 402.53,
-   "mean_opt_ha": 412.23
+   "mean_sar_ha": 591.49,
+   "mean_opt_ha": 613.69
   },
   "1일": {
-   "n": 367,
-   "mae_ha": 88.29,
-   "rmse_ha": 257.75,
-   "bias_ha": -45.78,
-   "mae_pct_of_wetland": 9.99,
+   "n": 356,
+   "mae_ha": 99.71,
+   "rmse_ha": 264.94,
+   "bias_ha": -57.82,
+   "mae_pct_of_wetland": 9.2,
    "pearson_r": 0.972,
-   "r2": 0.944,
-   "presence_agreement": 0.97,
+   "r2": 0.945,
+   "presence_agreement": 0.975,
    "presence_table": {
-    "둘다_수면": 356,
-    "SAR만": 11,
+    "둘다_수면": 347,
+    "SAR만": 9,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 579.73,
-   "mean_opt_ha": 625.51
+   "mean_sar_ha": 746.85,
+   "mean_opt_ha": 804.67
   },
   "2~3일": {
-   "n": 407,
-   "mae_ha": 131.68,
-   "rmse_ha": 387.85,
-   "bias_ha": -92.87,
-   "mae_pct_of_wetland": 12.34,
-   "pearson_r": 0.951,
-   "r2": 0.904,
+   "n": 385,
+   "mae_ha": 148.52,
+   "rmse_ha": 409.39,
+   "bias_ha": -99.88,
+   "mae_pct_of_wetland": 12.04,
+   "pearson_r": 0.946,
+   "r2": 0.895,
    "presence_agreement": 0.966,
    "presence_table": {
-    "둘다_수면": 389,
-    "SAR만": 14,
+    "둘다_수면": 368,
+    "SAR만": 13,
     "광학만": 0,
     "둘다_없음": 4
    },
-   "mean_sar_ha": 688.69,
-   "mean_opt_ha": 781.56
+   "mean_sar_ha": 819.02,
+   "mean_opt_ha": 918.9
   }
  },
  "sensitivity_open_only": {
   "주지표 (SAR −16dB · NDWI>0)": {
-   "n": 1022,
-   "mae_ha": 83.95,
-   "rmse_ha": 234.6,
-   "bias_ha": -42.29,
-   "mae_pct_of_wetland": 9.34,
-   "pearson_r": 0.977,
-   "r2": 0.955,
-   "presence_agreement": 0.974,
+   "n": 996,
+   "mae_ha": 96.41,
+   "rmse_ha": 247.29,
+   "bias_ha": -51.64,
+   "mae_pct_of_wetland": 8.86,
+   "pearson_r": 0.976,
+   "r2": 0.952,
+   "presence_agreement": 0.976,
    "presence_table": {
-    "둘다_수면": 995,
-    "SAR만": 27,
+    "둘다_수면": 972,
+    "SAR만": 24,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 597.42,
-   "mean_opt_ha": 639.71
+   "mean_sar_ha": 754.55,
+   "mean_opt_ha": 806.18
   },
   "SAR 대안 (장면별 Otsu)": {
-   "n": 1022,
-   "mae_ha": 82.53,
-   "rmse_ha": 232.48,
-   "bias_ha": -37.34,
-   "mae_pct_of_wetland": 9.18,
-   "pearson_r": 0.977,
-   "r2": 0.955,
-   "presence_agreement": 0.974,
+   "n": 996,
+   "mae_ha": 94.28,
+   "rmse_ha": 246.06,
+   "bias_ha": -45.34,
+   "mae_pct_of_wetland": 8.66,
+   "pearson_r": 0.975,
+   "r2": 0.952,
+   "presence_agreement": 0.976,
    "presence_table": {
-    "둘다_수면": 995,
-    "SAR만": 27,
+    "둘다_수면": 972,
+    "SAR만": 24,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 602.37,
-   "mean_opt_ha": 639.71
+   "mean_sar_ha": 760.85,
+   "mean_opt_ha": 806.18
   },
   "광학 대안 (NDWI>0.15)": {
-   "n": 1022,
-   "mae_ha": 96.08,
-   "rmse_ha": 246.17,
-   "bias_ha": -1.88,
-   "mae_pct_of_wetland": 10.69,
-   "pearson_r": 0.971,
-   "r2": 0.943,
-   "presence_agreement": 0.908,
+   "n": 996,
+   "mae_ha": 111.32,
+   "rmse_ha": 263.79,
+   "bias_ha": -1.05,
+   "mae_pct_of_wetland": 10.23,
+   "pearson_r": 0.968,
+   "r2": 0.938,
+   "presence_agreement": 0.929,
    "presence_table": {
-    "둘다_수면": 928,
-    "SAR만": 94,
+    "둘다_수면": 925,
+    "SAR만": 71,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 597.42,
-   "mean_opt_ha": 599.3
+   "mean_sar_ha": 754.55,
+   "mean_opt_ha": 755.59
   }
  },
  "note": "현장 실측이 아니라 독립 센서와의 일치도입니다. 두 센서가 일치한다고 그 값이 참이라는 보장은 없습니다. 식생피복 구간은 두 센서가 모두 0 에 가까워 자동으로 일치하므로, 판정이 실제로 시험되는 곳은 개방수면 구간(by_state.open)입니다. **여러 습지를 묶은 상관(r, R²)은 읽지 마십시오.** 크기가 다른 습지를 한데 넣으면 '큰 습지는 둘 다 크다'는 자명한 사실이 높은 상관으로 나옵니다. 실제로 습지 60개소·짝지음 1,075건에서 묶은 R² 는 0.92 인데, 습지별 R² 의 중앙값은 0.07 입니다. 상관은 반드시 습지별(by_wetland)로 보십시오. 묶어서 읽어도 되는 값은 표본 수와 수면 유무 일치율입니다. 또 하나 — **낮은 R² 를 '면적이 틀렸다'로 읽지 마십시오.** R² 는 변동을 설명하는 비율이라 변동 자체가 작으면 값이 낮게 나옵니다. 수준이 맞는지는 평균비와 MAE 로 따로 봐야 합니다(by_wetland 의 mean_sar_ha / mean_opt_ha).",
@@ -285,25 +285,6 @@
    "mean_sar_ha": 521.47,
    "mean_opt_ha": 487.6
   },
-  "13-356162-4-018": {
-   "name": "광주호습지",
-   "n": 13,
-   "mae_ha": 3.91,
-   "rmse_ha": 4.92,
-   "bias_ha": 0.62,
-   "mae_pct_of_wetland": 2.2,
-   "pearson_r": 0.921,
-   "r2": 0.849,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 13,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 138.8,
-   "mean_opt_ha": 138.17
-  },
   "13-358024-2-065": {
    "name": "달성습지",
    "n": 16,
@@ -399,25 +380,6 @@
    "mean_sar_ha": 59.91,
    "mean_opt_ha": 11.9
   },
-  "13-358104-0-009": {
-   "name": "악양습지(의령)",
-   "n": 14,
-   "mae_ha": 16.46,
-   "rmse_ha": 23.05,
-   "bias_ha": 16.46,
-   "mae_pct_of_wetland": 9.38,
-   "pearson_r": 0.137,
-   "r2": 0.019,
-   "presence_agreement": 0.929,
-   "presence_table": {
-    "둘다_수면": 13,
-    "SAR만": 1,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 71.72,
-   "mean_opt_ha": 55.26
-  },
   "13-358111-0-019": {
    "name": "송진늪",
    "n": 16,
@@ -456,24 +418,24 @@
    "mean_sar_ha": 205.36,
    "mean_opt_ha": 206.37
   },
-  "13-366124-2-041": {
-   "name": "저석습지",
-   "n": 14,
-   "mae_ha": 6.15,
-   "rmse_ha": 9.03,
-   "bias_ha": 4.48,
-   "mae_pct_of_wetland": 3.73,
-   "pearson_r": 0.016,
-   "r2": 0.0,
+  "13-366154-2-008": {
+   "name": "금강호습지",
+   "n": 12,
+   "mae_ha": 11.59,
+   "rmse_ha": 14.83,
+   "bias_ha": -10.1,
+   "mae_pct_of_wetland": 0.83,
+   "pearson_r": -0.086,
+   "r2": 0.007,
    "presence_agreement": 1.0,
    "presence_table": {
-    "둘다_수면": 14,
+    "둘다_수면": 12,
     "SAR만": 0,
     "광학만": 0,
     "둘다_없음": 0
    },
-   "mean_sar_ha": 109.26,
-   "mean_opt_ha": 104.78
+   "mean_sar_ha": 1311.87,
+   "mean_opt_ha": 1321.97
   },
   "13-366161-3-049": {
    "name": "봉선지",
@@ -513,25 +475,6 @@
    "mean_sar_ha": 41.65,
    "mean_opt_ha": 29.5
   },
-  "13-367062-2-084": {
-   "name": "남촌습지",
-   "n": 10,
-   "mae_ha": 5.71,
-   "rmse_ha": 6.59,
-   "bias_ha": -4.51,
-   "mae_pct_of_wetland": 3.58,
-   "pearson_r": -0.015,
-   "r2": 0.0,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 10,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 9.48,
-   "mean_opt_ha": 13.99
-  },
   "13-367063-2-054": {
    "name": "명학습지",
    "n": 10,
@@ -569,25 +512,6 @@
    },
    "mean_sar_ha": 52.48,
    "mean_opt_ha": 44.52
-  },
-  "13-367063-2-082": {
-   "name": "예양습지",
-   "n": 9,
-   "mae_ha": 7.87,
-   "rmse_ha": 9.18,
-   "bias_ha": 3.65,
-   "mae_pct_of_wetland": 4.93,
-   "pearson_r": 0.654,
-   "r2": 0.427,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 9,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 33.43,
-   "mean_opt_ha": 29.78
   },
   "13-367091-2-026": {
    "name": "신흥습지(공주)",
@@ -627,25 +551,6 @@
    "mean_sar_ha": 131.89,
    "mean_opt_ha": 132.76
   },
-  "13-368062-2-018": {
-   "name": "고평습지",
-   "n": 12,
-   "mae_ha": 13.33,
-   "rmse_ha": 17.42,
-   "bias_ha": 6.92,
-   "mae_pct_of_wetland": 7.23,
-   "pearson_r": -0.139,
-   "r2": 0.019,
-   "presence_agreement": 0.917,
-   "presence_table": {
-    "둘다_수면": 11,
-    "SAR만": 1,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 24.49,
-   "mean_opt_ha": 17.57
-  },
   "13-368064-2-020": {
    "name": "경진습지",
    "n": 15,
@@ -683,25 +588,6 @@
    },
    "mean_sar_ha": 28.98,
    "mean_opt_ha": 28.15
-  },
-  "13-368073-2-013": {
-   "name": "병산리습지",
-   "n": 11,
-   "mae_ha": 15.72,
-   "rmse_ha": 25.67,
-   "bias_ha": 13.71,
-   "mae_pct_of_wetland": 9.96,
-   "pearson_r": -0.352,
-   "r2": 0.124,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 11,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 43.21,
-   "mean_opt_ha": 29.49
   },
   "13-368073-2-021": {
    "name": "구담습지(안동)",
@@ -798,44 +684,6 @@
    "mean_sar_ha": 141.37,
    "mean_opt_ha": 138.97
   },
-  "13-377113-2-045": {
-   "name": "흥천교습지",
-   "n": 7,
-   "mae_ha": 5.22,
-   "rmse_ha": 6.87,
-   "bias_ha": 1.72,
-   "mae_pct_of_wetland": 2.96,
-   "pearson_r": 0.136,
-   "r2": 0.018,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 7,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 10.74,
-   "mean_opt_ha": 9.02
-  },
-  "14-357162-2-030": {
-   "name": "완사늪",
-   "n": 22,
-   "mae_ha": 6.78,
-   "rmse_ha": 8.34,
-   "bias_ha": -2.84,
-   "mae_pct_of_wetland": 4.01,
-   "pearson_r": 0.483,
-   "r2": 0.233,
-   "presence_agreement": 0.955,
-   "presence_table": {
-    "둘다_수면": 21,
-    "SAR만": 1,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 25.91,
-   "mean_opt_ha": 28.75
-  },
   "14-367132-3-014": {
    "name": "탑정호",
    "n": 12,
@@ -892,44 +740,6 @@
    },
    "mean_sar_ha": 48.2,
    "mean_opt_ha": 51.04
-  },
-  "15-368083-2-034": {
-   "name": "포진습지",
-   "n": 12,
-   "mae_ha": 10.77,
-   "rmse_ha": 12.9,
-   "bias_ha": -3.1,
-   "mae_pct_of_wetland": 6.89,
-   "pearson_r": -0.208,
-   "r2": 0.043,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 12,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 46.51,
-   "mean_opt_ha": 49.62
-  },
-  "15-376034-2-010": {
-   "name": "공릉천하구습지",
-   "n": 8,
-   "mae_ha": 11.38,
-   "rmse_ha": 13.92,
-   "bias_ha": -11.38,
-   "mae_pct_of_wetland": 6.02,
-   "pearson_r": -0.109,
-   "r2": 0.012,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 8,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 35.28,
-   "mean_opt_ha": 46.66
   },
   "15-377054-2-069": {
    "name": "미사동습지",
@@ -1045,6 +855,25 @@
    "mean_sar_ha": 159.6,
    "mean_opt_ha": 158.13
   },
+  "20-346061-5-301": {
+   "name": "금호호하구습지",
+   "n": 15,
+   "mae_ha": 83.38,
+   "rmse_ha": 96.26,
+   "bias_ha": -83.38,
+   "mae_pct_of_wetland": 3.13,
+   "pearson_r": 0.778,
+   "r2": 0.606,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 15,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 2261.56,
+   "mean_opt_ha": 2344.94
+  },
   "20-346064-5-301": {
    "name": "고천암호하구습지",
    "n": 17,
@@ -1083,6 +912,25 @@
    "mean_sar_ha": 261.97,
    "mean_opt_ha": 263.57
   },
+  "20-347041-5-302": {
+   "name": "섬진강하구습지",
+   "n": 18,
+   "mae_ha": 243.64,
+   "rmse_ha": 256.18,
+   "bias_ha": -243.64,
+   "mae_pct_of_wetland": 37.3,
+   "pearson_r": -0.123,
+   "r2": 0.015,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 18,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 290.28,
+   "mean_opt_ha": 533.92
+  },
   "20-356103-5-301": {
    "name": "불갑천하구습지",
    "n": 5,
@@ -1101,6 +949,63 @@
    },
    "mean_sar_ha": 71.7,
    "mean_opt_ha": 3.88
+  },
+  "20-358162-5-301": {
+   "name": "낙동강하구습지",
+   "n": 11,
+   "mae_ha": 110.54,
+   "rmse_ha": 116.83,
+   "bias_ha": -110.54,
+   "mae_pct_of_wetland": 5.48,
+   "pearson_r": 0.225,
+   "r2": 0.051,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 11,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 911.9,
+   "mean_opt_ha": 1022.45
+  },
+  "20-366022-5-302": {
+   "name": "성연천하구습지",
+   "n": 8,
+   "mae_ha": 140.14,
+   "rmse_ha": 161.57,
+   "bias_ha": -140.14,
+   "mae_pct_of_wetland": 10.56,
+   "pearson_r": 0.676,
+   "r2": 0.457,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 8,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 1030.3,
+   "mean_opt_ha": 1170.43
+  },
+  "20-366022-5-303": {
+   "name": "염솔천하구습지",
+   "n": 8,
+   "mae_ha": 35.6,
+   "rmse_ha": 56.18,
+   "bias_ha": -34.74,
+   "mae_pct_of_wetland": 7.31,
+   "pearson_r": 0.267,
+   "r2": 0.072,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 8,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 358.46,
+   "mean_opt_ha": 393.2
   },
   "20-366031-5-301": {
    "name": "역천하구습지",
@@ -1121,6 +1026,44 @@
    "mean_sar_ha": 613.39,
    "mean_opt_ha": 674.94
   },
+  "20-366041-5-302": {
+   "name": "삽교천하구습지",
+   "n": 9,
+   "mae_ha": 26.83,
+   "rmse_ha": 30.86,
+   "bias_ha": -19.87,
+   "mae_pct_of_wetland": 1.36,
+   "pearson_r": 0.664,
+   "r2": 0.441,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 9,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 1492.62,
+   "mean_opt_ha": 1512.49
+  },
+  "20-366042-5-301": {
+   "name": "안성천하구습지",
+   "n": 10,
+   "mae_ha": 239.72,
+   "rmse_ha": 543.73,
+   "bias_ha": 100.16,
+   "mae_pct_of_wetland": 10.05,
+   "pearson_r": 0.541,
+   "r2": 0.293,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 10,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 1977.72,
+   "mean_opt_ha": 1877.55
+  },
   "20-366043-5-301": {
    "name": "곡교천하구습지",
    "n": 10,
@@ -1139,6 +1082,44 @@
    },
    "mean_sar_ha": 143.02,
    "mean_opt_ha": 131.62
+  },
+  "20-366061-5-301": {
+   "name": "부남호하구습지",
+   "n": 12,
+   "mae_ha": 19.29,
+   "rmse_ha": 24.04,
+   "bias_ha": -16.55,
+   "mae_pct_of_wetland": 1.35,
+   "pearson_r": 0.169,
+   "r2": 0.029,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 12,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 1345.06,
+   "mean_opt_ha": 1361.61
+  },
+  "20-366062-5-303": {
+   "name": "천수만하구습지",
+   "n": 10,
+   "mae_ha": 23.16,
+   "rmse_ha": 28.75,
+   "bias_ha": -14.18,
+   "mae_pct_of_wetland": 0.92,
+   "pearson_r": 0.223,
+   "r2": 0.05,
+   "presence_agreement": 1.0,
+   "presence_table": {
+    "둘다_수면": 10,
+    "SAR만": 0,
+    "광학만": 0,
+    "둘다_없음": 0
+   },
+   "mean_sar_ha": 2331.15,
+   "mean_opt_ha": 2345.33
   },
   "20-366064-5-301": {
    "name": "금리천하구습지",
@@ -1196,25 +1177,6 @@
    },
    "mean_sar_ha": 281.89,
    "mean_opt_ha": 291.47
-  },
-  "20-376152-5-301": {
-   "name": "자안천하구습지",
-   "n": 7,
-   "mae_ha": 5.68,
-   "rmse_ha": 6.63,
-   "bias_ha": -2.98,
-   "mae_pct_of_wetland": 3.03,
-   "pearson_r": 0.885,
-   "r2": 0.783,
-   "presence_agreement": 1.0,
-   "presence_table": {
-    "둘다_수면": 7,
-    "SAR만": 0,
-    "광학만": 0,
-    "둘다_없음": 0
-   },
-   "mean_sar_ha": 106.53,
-   "mean_opt_ha": 109.51
   },
   "20-376152-5-302": {
    "name": "화성호하구습지",
@@ -1331,24 +1293,24 @@
    "mean_opt_ha": 3206.75
   }
  },
- "median_wetland_r2": 0.068,
- "n_wetlands_validated": 60,
+ "median_wetland_r2": 0.071,
+ "n_wetlands_validated": 58,
  "area_level_vs_variation": {
   "설명": "수준은 맞는지, 변동을 따라가는지를 갈라 봅니다. 면적 절대값을 산출물에서 뺀 근거는 '변동' 쪽입니다.",
-  "n_wetlands": 60,
-  "level_ratio_median": 1.005,
+  "n_wetlands": 58,
+  "level_ratio_median": 0.993,
   "level_ratio_iqr": [
-   0.954,
-   1.179
+   0.944,
+   1.079
   ],
-  "level_within_10pct": 38,
-  "mae_pct_of_water_median": 17.6,
+  "level_within_10pct": 40,
+  "mae_pct_of_water_median": 10.7,
   "mae_pct_of_water_iqr": [
-   5.9,
-   40.3
+   4.6,
+   33.1
   ],
-  "wetland_r2_median": 0.068,
-  "wetland_r2_ge_05": 9,
+  "wetland_r2_median": 0.071,
+  "wetland_r2_ge_05": 8,
   "판정": "치우침은 없습니다(평균비 중앙 ~1.0). 다만 개별 습지의 수준 오차가 크고(MAE 중앙 수면적의 ~18%), 시간 변동은 따라가지 못합니다(습지별 R² 중앙 ~0.07). '이 습지 수면이 몇 ha 인가' 도 정밀하지 않고, '지난달보다 늘었나' 는 답할 수 없습니다."
  }
 }

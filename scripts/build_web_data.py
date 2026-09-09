@@ -189,5 +189,6 @@ if __name__ == "__main__":
     DEFAULT = [
         "nie2025.jsonl",     # 전국 확대 판독 (정본 경계)
         "nie_deep.jsonl",    # 다년 심층 판독 + 광학 교차검증 (정본 경계)
+        "nie2025_retry.jsonl",  # 대면적 습지 23개소 — 기간 분할로 재판독
     ]
     build(sys.argv[1:] or DEFAULT)

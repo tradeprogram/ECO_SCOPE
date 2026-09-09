@@ -70,7 +70,17 @@ def scene_threshold(image: ee.Image, region: ee.Geometry) -> ee.Number:
         maxPixels=HIST_MAX_PIXELS,
         bestEffort=True,
     ).get("VV")
-    thr = otsu(ee.Dictionary(hist))
+    # 판독창에 유효 화소가 없으면 히스토그램이 비어 bucketMeans 키 자체가 없다.
+    # 그대로 otsu() 에 넘기면 'Dictionary does not contain key' 로 장면이 아니라
+    # **요청 전체**가 죽는다. 대면적 습지를 분기로 쪼개 받을 때 이 오류로 11개소가
+    # 통째로 실패했다. 빈 히스토그램은 고정임계로 넘긴다.
+    hd = ee.Dictionary(hist)
+    usable = ee.Algorithms.If(
+        ee.Algorithms.IsEqual(hist, None),
+        False,
+        hd.contains("bucketMeans"),
+    )
+    thr = ee.Number(ee.Algorithms.If(usable, otsu(hd), WATER_VV_DB_MAX))
     # Otsu 가 엉뚱한 곳(전부 물 / 전부 뭍이라 이봉이 아닌 장면)에 꽂히면 고정값으로 되돌린다.
     lo, hi = OTSU_VALID_RANGE
     return ee.Number(ee.Algorithms.If(thr.gte(lo).And(thr.lte(hi)), thr, WATER_VV_DB_MAX))
