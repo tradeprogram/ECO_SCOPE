@@ -5,7 +5,7 @@ const fs = require("fs");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   WidthType, AlignmentType, VerticalAlign, ShadingType, BorderStyle,
-  HeadingLevel, PageBreak, VerticalMergeType,
+  HeadingLevel, PageBreak, VerticalMergeType, ImageRun,
 } = require("docx");
 
 const FONT = "휴먼명조";
@@ -99,6 +99,33 @@ const FIELD_COLS = (() => {
   return [LAB, w, w, VAL - 2 * w];
 })();
 
+
+/* ── 그림 ────────────────────────────────────────────────────────────────
+   제안 내용 칸 폭(약 7100 DXA ≈ 12.5cm)에 맞춰 넣습니다. 캡션은 그림 바로
+   아래 작은 글씨로 답니다. 원본은 2배 해상도로 떠서 인쇄해도 뭉개지지 않습니다. */
+const FIGDIR = process.argv[3] || "figures";
+const FIG_W = 395;                       // pt 단위 표시 폭
+
+function figure(file, ratio, caption, width) {
+  const w = width ?? FIG_W;
+  return [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 100, after: 40 },
+      children: [new ImageRun({
+        type: "png",
+        data: fs.readFileSync(`${FIGDIR}/${file}`),
+        transformation: { width: w, height: Math.round(w * ratio) },
+      })],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 120 },
+      children: [t(caption, { size: 18 })],
+    }),
+  ];
+}
+
 /* ── 1. 참가신청서 ──────────────────────────────────────────────────── */
 
 function applicationForm() {
@@ -173,6 +200,8 @@ const 제안내용 = [
   ["현황 및 문제점", 1],
   ["내륙습지 2,704개소를 5년 주기(「습지보전법」 제4조)로 조사합니다. 조사 사이 약 4년의 상태 변화는 기록되지 않고, 어디를 먼저 볼지 판단할 근거도 부족합니다.", 2],
   ["습지 수면은 주 단위로 변합니다. 본 판독에서도 관측 16,314회 중 1,730회(10.6%)에서 개방수면이 해당 습지 기준선의 30% 아래로 내려갔습니다.", 2],
+  { fig: "fig2_calendar.png", ratio: 0.459,
+    cap: "[그림 1] 관측 달력 — 칸 하나가 Sentinel-1 관측 1회. 5년 주기로는 보이지 않는 연중 변동이 기록된다." },
   ["추진 목적 및 필요성", 1],
   ["전수 조사를 대체하지 않고, 조사 우선순위의 근거를 상시 공급합니다.", 2],
   ["판독 대상 489개소 중 120개소는 개방수면율 5% 미만으로, 수면 기반 감시 대상이 아님을 사전 식별할 수 있습니다.", 2],
@@ -181,9 +210,13 @@ const 제안내용 = [
   ["(대상) 하천형·호수형 내륙습지 30헥타르 이상 489개소 판독 완료.", 2],
   ["(기간) 시범운영 6개월, 조사계획 연계 12개월.", 2],
   ["(방법) 에코뱅크 정본 경계 적재 → 궤도 고정 → Sentinel-1 후방산란 -16dB 미만·경사 5도 이하를 수체로 판독 → 상태 분류 → Sentinel-2 광학 교차검증.", 2],
+  { fig: "fig1_screen.png", ratio: 0.641,
+    cap: "[그림 2] 실행 화면 (ecoscope-nie.vercel.app) — 개념이 아니라 공개 운영 중인 결과물이다." },
   ["기존 사업·정책과의 차별성", 1],
   ["차별성은 기술이 아니라 산출물의 설계에 있습니다. 판독 결과와 그 신뢰 범위를 함께 싣습니다.", 2],
   ["(검증된 것) 수면 유무 판정의 두 센서 일치율 0.976 (58개소·1,035건). 원리가 다른 레이더와 광학이 독립적으로 같은 판정을 내렸습니다.", 2],
+  { fig: "fig3_timeseries.png", ratio: 0.595, w: 350,
+    cap: "[그림 3] 판독 결과와 교차검증 — 파란 선이 레이더 판독, 녹색 점이 같은 시기 Sentinel-2 광학(NDVI)." },
   ["(검증되지 않은 것) 면적 절대값은 치우침은 없으나(평균비 0.993) 시간 변동을 못 따라갑니다(결정계수 중앙값 0.071). 상대 지수로만 표시합니다.", 2],
   ["(기각한 것) 감소 원인의 후방산란 판정(특이도 0.10)과 풍파 가설을 기각하였습니다.", 2],
   ["수혜 대상(범위) 및 혜택 수준", 1],
@@ -214,7 +247,10 @@ const 기타사항 = [
 ];
 
 function lines(items) {
-  return items.map(([text, lvl]) => {
+  return items.flatMap((it) => {
+    // 그림 항목: { fig, ratio, cap, w }
+    if (it && it.fig) return figure(it.fig, it.ratio, it.cap, it.w);
+    const [text, lvl] = it;
     if (lvl === 0) return p("○ " + text, { bold: true, before: 60, wide: true });
     if (lvl === 1) return p(" - " + text, { wide: true, indent: { left: 200, hanging: 120 } });
     return p("· " + text, { wide: true, indent: { left: 480, hanging: 140 } });
