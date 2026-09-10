@@ -108,20 +108,22 @@ function renderOverview() {
     metric(fmt(s.n_wetlands), "개소", "판독 습지") +
     metric(fmt(s.mean_revisit_days, 1), "일", "평균 재방문");
 
+  // 상단 지표는 색으로 구분하지 않습니다. 색이 값의 좋고 나쁨을 암시하는데,
+  // 이 수치들은 그런 성격이 아닙니다(미발달은 결함이 아니라 습지의 성질입니다).
   $("metrics-target").innerHTML =
-    metric(fmt(s.n_wetlands_open_water), "개소", "개방수면 성립", "water") +
-    metric(fmt(s.n_wetlands_with_cover_loss), "개소", "개방수면 감소 관측", "veg") +
-    metric(fmt(s.n_wetlands_no_open_water), "개소", "개방수면 미발달", "mute");
+    metric(fmt(s.n_wetlands_open_water), "개소", "개방수면 성립") +
+    metric(fmt(s.n_wetlands_with_cover_loss), "개소", "개방수면 감소 관측") +
+    metric(fmt(s.n_wetlands_no_open_water), "개소", "개방수면 미발달");
 
   // 묶은 상관(by_state.open.r2)은 습지 간 크기 차이에 오염되므로 화면에 올리지 않습니다.
   // 습지별 상관의 중앙값만 인용합니다.
   const V = S.validation;
   const v = V && V.by_state && V.by_state.open;
   $("metrics-valid").innerHTML = v
-    ? metric(v.presence_agreement.toFixed(2), "", "수면 유무 일치율", "water") +
+    ? metric(v.presence_agreement.toFixed(2), "", "수면 유무 일치율") +
       metric(fmt(v.n), "건", "대조 관측") +
-      metric((V.median_wetland_r2 ?? 0).toFixed(2), "", "면적 R² (중앙값)", "warn")
-    : metric("—", "", "검증 자료 없음", "mute");
+      metric((V.median_wetland_r2 ?? 0).toFixed(2), "", "면적 R² (중앙값)")
+    : metric("—", "", "검증 자료 없음");
 
   const perYear = s.mean_obs_per_wetland_year;
   $("metrics-ratio").innerHTML =
