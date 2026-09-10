@@ -171,10 +171,12 @@ function labelOf(r) {
 function renderList() {
   const rows = rowsForYear();
   const total = S.years.filter((r) => r.year === S.year).length;
-  // 우측 수치가 무엇인지 한 번만 밝혀 둡니다. 열 제목을 따로 두면 목록이 무거워집니다.
-  $("rail-count").textContent = S.search
-    ? `검색 ${rows.length}개소 · 우측은 개방수면 감소 관측 비중`
-    : `${rows.length} / ${total}개소 · ${S.year}년 · 우측은 개방수면 감소 관측 비중`;
+  // 내려받기 단추와 한 줄을 나눠 쓰므로 짧게 둡니다. 우측 수치의 뜻은 툴팁으로 옮겼습니다.
+  const count = $("rail-count");
+  count.textContent = S.search
+    ? `검색 ${rows.length}개소`
+    : `${rows.length} / ${total}개소 · ${S.year}년`;
+  count.title = "목록 우측의 백분율은 그 해 관측 중 개방수면이 감소한 관측의 비중입니다.";
 
   const ul = $("wetland-list");
   ul.innerHTML = "";
@@ -211,6 +213,7 @@ function select(wid) {
   renderShape();
   renderLocator();
   renderOrbits();
+  syncExportButtons();
 }
 
 /* ─────────── 관측 가능성 ─────────── */
@@ -491,6 +494,16 @@ function renderTimeseries() {
 
 /* ─────────── 습지 요약 ─────────── */
 
+/* 내려받을 자료가 없을 때 단추를 눌러도 아무 일이 없으면 고장으로 보입니다. */
+function syncExportButtons() {
+  const list = $("export-list"), obs = $("export-obs");
+  if (list) list.disabled = rowsForYear().length === 0;
+  if (obs) {
+    const r = S.years.find((x) => x.wid === S.sel && x.year === S.year);
+    obs.disabled = !(r && r.observations && r.observations.length);
+  }
+}
+
 function renderDetail() {
   const host = $("detail");
   const all = S.years.filter((r) => r.wid === S.sel).sort((a, b) => b.year - a.year);
@@ -646,6 +659,110 @@ function blankTile(src) {
       return blank;
     })
     .catch(() => false);   // 확인에 실패하면 이미지를 지우지 않습니다.
+}
+
+/* ─────────── 결과 내보내기 ───────────
+
+   담당자가 조사 계획을 세울 때 화면만으로는 부족합니다. 엑셀로 열어
+   정렬·필터·병합을 해야 실제 업무에 들어갑니다.
+
+   두 가지를 유의했습니다.
+     1. UTF-8 BOM 을 붙입니다. 없으면 한글 Excel 이 CP949 로 읽어 전부 깨집니다.
+     2. 면적 열에는 검증되지 않았다는 사실을 파일 안에 함께 적습니다.
+        화면의 주의문구는 파일로 내려받는 순간 떨어져 나가기 때문입니다.
+*/
+
+function csvCell(v) {
+  if (v === null || v === undefined) return "";
+  const s = String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function csvDownload(name, header, rows, notes) {
+  const lines = [];
+  for (const n of notes || []) lines.push("# " + n);
+  lines.push(header.map(csvCell).join(","));
+  for (const r of rows) lines.push(r.map(csvCell).join(","));
+  // BOM 이 없으면 한글 Excel 에서 글자가 깨집니다.
+  const blob = new Blob(["﻿" + lines.join("\r\n") + "\r\n"],
+                        { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function stamp() {
+  const d = S.summary && S.summary.generated_utc
+    ? S.summary.generated_utc.slice(0, 10).replace(/-/g, "")
+    : new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  return d;
+}
+
+const EXPORT_NOTES = [
+  "에코스코프 — 내륙습지 개방수면 원격판독 결과",
+  "출처: Sentinel-1 GRD (IW, VV) · 개방수면 판정 = VV < -16 dB 이고 지형경사 < 5도",
+  "주의: 개방수면적(ha) 절대값은 검증되지 않았습니다. 독립 센서 대조에서 치우침은",
+  "      없으나(평균비 0.993) 시간 변동을 따라가지 못합니다(습지별 결정계수 중앙값 0.071).",
+  "      면적을 측정값으로 인용하지 마십시오. 검증된 것은 수면 유무 판정입니다(일치율 0.976).",
+  "판독 한계와 근거: https://ecoscope-nie.vercel.app (판독 한계 · 검증 결과)",
+];
+
+/* 목록에 보이는 습지들의 연도 요약. 화면의 필터·정렬을 그대로 따릅니다. */
+function exportList() {
+  const rows = rowsForYear();
+  if (!rows.length) return;
+  const header = [
+    "습지코드", "습지명", "판독연도", "습지면적_ha", "관측횟수", "평균재방문_일",
+    "상대궤도", "궤도방향", "개방수면_지표적용", "판독신뢰도",
+    "개방수면_감소_관측수", "개방수면_감소_관측비중",
+    "최대개방수면적_ha_미검증", "중앙개방수면적_ha_미검증", "최소개방수면적_ha_미검증",
+    "개방수면율_기준선",
+  ];
+  const body = rows.map((r) => [
+    r.wid, labelOf(r), r.year, r.area_ha, r.n_obs, r.revisit_days,
+    r.rel_orbit, r.orbit_pass, r.has_open_water ? "적용" : "미발달",
+    r.confidence === "high" ? "고" : "저",
+    r.n_covered ?? "", r.covered_share ?? "",
+    r.open_ha_max, r.open_ha_med, r.open_ha_min, r.open_ratio_baseline,
+  ]);
+  csvDownload(`에코스코프_습지목록_${S.year}년_${stamp()}.csv`, header, body,
+    EXPORT_NOTES.concat([
+      `대상: ${S.year}년 · ${rows.length}개소` +
+      (S.onlyOpen ? " (개방수면 판독 성립 습지만)" : "") +
+      (S.search ? ` (검색: ${S.search})` : ""),
+    ]));
+}
+
+/* 선택한 습지의 관측 하나하나. 시계열을 직접 다시 그릴 수 있는 수준으로 냅니다. */
+function exportObservations() {
+  const r = S.years.find((x) => x.wid === S.sel && x.year === S.year);
+  if (!r || !r.observations || !r.observations.length) return;
+  const header = [
+    "습지코드", "습지명", "관측일", "장면수", "상태",
+    "개방수면율", "개방수면적_ha_미검증", "개방수면적_Otsu_ha_미검증",
+    "VV평균_dB", "장면별Otsu임계_dB",
+  ];
+  const body = r.observations.map((o) => [
+    r.wid, labelOf(r), o.date, o.frames, STATE_LABEL[o.state] || o.state,
+    o.open_ratio, o.open_ha, o.open_ha_alt, o.vv_db, o.thr_db,
+  ]);
+  // 광학(Sentinel-2)은 열 구성이 달라 섞지 않습니다. 교차검증 수치는 화면의
+  // '검증 결과' 패널에 있습니다.
+  csvDownload(`에코스코프_${labelOf(r)}_${r.year}년_관측_${stamp()}.csv`,
+    header, body,
+    EXPORT_NOTES.concat([
+      `습지: ${labelOf(r)} (${r.wid}) · ${r.year}년 · 관측 ${r.n_obs}회 · orbit ${r.rel_orbit}`,
+      "상태: 개방수면 = 수면 관측 / 개방수면 감소 = 기준선의 30% 미만으로 감소",
+      "개방수면적_Otsu 는 임계값 선택 민감도를 보기 위한 대안 산출입니다(주지표 아님).",
+      (r.optical && r.optical.length)
+        ? `이 습지는 Sentinel-2 광학 ${r.optical.length}장면으로 교차검증되었습니다(화면의 검증 결과 참조).`
+        : "이 습지는 광학 교차검증 대상이 아닙니다.",
+    ]));
 }
 
 /* ─────────── 위치 ─────────── */
@@ -918,6 +1035,9 @@ Sentinel-2 NDVI 와 대조한 결과 <b>이 판정은 성립하지 않았습니�
 };
 
 function wireControls() {
+  $("export-list").onclick = exportList;
+  $("export-obs").onclick = exportObservations;
+
   $("year-select").onchange = (e) => { S.year = Number(e.target.value); renderAll(); };
   $("sort-select").onchange = (e) => { S.sort = e.target.value; renderAll(); };
   $("only-open").onchange = (e) => { S.onlyOpen = e.target.checked; renderAll(); };
@@ -957,6 +1077,7 @@ function renderAll() {
   renderShape();
   renderLocator();
   renderOrbits();
+  syncExportButtons();
 }
 
 window.ECOSCOPE = { S, select, openPanel, labelOf, fmt };

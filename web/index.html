@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에코스코프 — 내륙습지 개방수면 원격판독</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="style.css?v=20260909172131">
+<link rel="stylesheet" href="style.css?v=20260910135205">
 </head>
 <body>
 
@@ -74,7 +74,10 @@
         개방수면 판독 성립 습지만
       </label>
     </div>
-    <div class="rail-count" id="rail-count"></div>
+    <div class="rail-foot">
+      <span class="rail-count" id="rail-count"></span>
+      <button class="csv-btn" id="export-list" type="button" title="현재 목록을 CSV 로 내려받습니다">목록 CSV</button>
+    </div>
     <ul class="wetland-list" id="wetland-list"></ul>
   </aside>
 
@@ -95,6 +98,7 @@
         <div class="card-head">
           <h2 id="ts-title">정규화 개방수면율</h2>
           <span class="meta" id="ts-meta"></span>
+          <button class="csv-btn" id="export-obs" type="button" title="이 습지의 관측 기록을 CSV 로 내려받습니다">관측 CSV</button>
         </div>
         <div id="timeseries"></div>
         <p class="foot" id="ts-foot"></p>
@@ -164,7 +168,7 @@
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="app.js?v=20260909172131"></script>
-<script src="agent.js?v=20260909172131"></script>
+<script src="app.js?v=20260910135205"></script>
+<script src="agent.js?v=20260910135205"></script>
 </body>
 </html>

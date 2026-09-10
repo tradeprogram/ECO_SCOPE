@@ -128,7 +128,23 @@ table{border-collapse:collapse}
 }
 .field select:focus,.rail-search:focus{border-color:var(--green-2)}
 .check{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:12px;color:var(--ink-2)}
-.rail-count{padding:9px var(--pad);font-size:11px;color:var(--muted);background:#fafbfa;border-bottom:1px solid var(--line-2)}
+.rail-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:7px var(--pad);background:#fafbfa;border-bottom:1px solid var(--line-2);
+}
+.rail-count{font-size:11px;color:var(--muted);min-width:0}
+
+/* 내려받기 단추 — 화면을 지배하지 않도록 작고 조용하게 둡니다. */
+.csv-btn{
+  flex:none;border:1px solid var(--line);border-radius:4px;background:#fff;
+  padding:4px 9px;font:inherit;font-size:11px;color:var(--ink-2);cursor:pointer;
+  white-space:nowrap;transition:border-color .12s,color .12s;
+}
+.csv-btn:hover{border-color:var(--green-2);color:var(--green-2)}
+.csv-btn:active{background:#f4f8f4}
+.csv-btn:disabled{opacity:.4;cursor:default}
+.csv-btn:disabled:hover{border-color:var(--line);color:var(--ink-2)}
+.card-head .csv-btn{margin-left:auto}
 
 .wetland-list{list-style:none;margin:0;padding:0;overflow-y:auto;max-height:calc(100vh - 300px)}
 .wetland-list li{
